@@ -34,7 +34,7 @@
   excludesfile = ~/.gitignore
   whitespace = fix,tab-in-indent,trailing-space
   autocrlf = false
-	editor = /opt/homebrew/bin/nvim -u NORC
+	editor = nvim -u NORC
   # --quit-if-one-screen --RAW-CONTROL-CHARS --no-init
   pager = less -FRX
 
