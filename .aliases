@@ -1,0 +1,107 @@
+#!/bin/bash -e
+# Easier navigation: .., ..., ~ and -
+alias ..="cd .."
+alias ...="cd ../.."
+
+
+# Check if eza is installed
+if command -v eza &> /dev/null; then
+  alias tree="eza $eza_params --tree --group-directories-first"
+  alias lsd="eza $eza_params --only-dirs -a"
+else
+  # Fallback to ls if eza is not available
+  alias ls="ls --color=auto"
+  alias ll="ls -la"
+  alias la="ls -A"
+  alias lsd="ls -l | grep '^d'"
+fi
+
+function sc {
+  sesh connect "$(sesh list -i | gum filter --limit 1 --placeholder 'Pick a sesh' --prompt='⚡')"
+}
+
+alias gst="git status --short"
+alias gd="git diff --no-prefix"
+alias gco="git checkout"
+alias gcb="git checkout -b"
+alias br="git branch --show-current"
+
+alias vim="nvim"
+
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  alias bot="/Applications/Hummingbot.app/Contents/Resources/hummingbot/bot"
+  alias tailscale='/Applications/Tailscale.app/Contents/MacOS/Tailscale'
+fi
+
+alias dc="docker compose"
+# List only directories
+
+alias myip="dig +short myip.opendns.com @resolver1.opendns.com"
+alias ips="ifconfig -a | perl -nle'/(\d+\.\d+\.\d+\.\d+)/ && print $1'"
+
+# Flush Directory Service cache
+# alias flush="dscacheutil -flushcache"
+
+# View HTTP traffic
+alias sniff="sudo ngrep -d 'en1' -t '^(GET|POST) ' 'tcp and port 80'"
+alias httpdump="sudo tcpdump -i en1 -n -s 0 -w - | grep -a -o -E \"Host\: .*|GET \/.*\""
+
+# Start an HTTP server from a directory
+alias server="open http://localhost:6060/ && python -m SimpleHTTPServer 6060"
+
+# ROT13-encode text. Works for decoding, too! ;)
+alias rot13='tr a-zA-Z n-za-mN-ZA-M'
+
+#Grep alias
+alias grep='grep --colour=auto'
+alias diff='diff -u'
+
+function module() {
+  open "http://ghub.io/$1"
+}
+
+# get the name of a pod by app label
+#   $ get-pod airflow-web
+#   > airflow-web-6b94bd6885-ckczv
+function get-pod {
+  kubectl get pod -o name -l app=$1  | awk -F/ '{print $2}' | head -1
+}
+
+# set kubectl context to specified project & airflow namespace
+#   $ sixty-project sixty-capital-test
+#   > Fetching cluster endpoint and auth data.
+#   > kubeconfig entry generated for sixty-capital-test.
+#   > context "gke_sixty-capital-test_us-east4-c_sixty-capital-test" modified.
+function sixty-project() {
+  gcloud container clusters get-credentials --project=$1 --zone=us-east4-c $1 \
+    && kubectl config set-context $(kubectl config current-context) --namespace=airflow
+}
+
+function gcr-latest {
+  local gcr_uri=$1
+  local branch=$2
+  local commit_sha=$(gcloud container images list-tags $1 \
+    --filter="tags=$2" --limit=1 --format='value(tags)' \
+    | awk -F, '{print $1}')
+  echo $gcr_uri:$commit_sha
+}
+
+# for wsl2
+function mem {
+  sudo sh -c 'echo 1 > /proc/sys/vm/drop_caches'
+  sudo sh -c 'echo 1 > /proc/sys/vm/compact_memory'
+}
+
+flush_redis_cache() {
+    if [ $# -eq 0 ]; then
+        echo "Error: Redis URL is required as an argument"
+        echo "Usage: flush_redis_cache <redis_url>"
+        return 1
+    fi
+
+    REDIS_URL=$1
+
+    redis-cli -u "$REDIS_URL" KEYS "cache:*" | xargs redis-cli -u "$REDIS_URL" DEL
+
+    echo "Cache keys deleted successfully"
+}

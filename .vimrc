@@ -193,7 +193,7 @@ vnoremap <tab> %
 nnoremap <C-e> 3<C-e>
 nnoremap <C-y> 3<C-y>
 nnoremap <silent> <F5> :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar>:nohl<CR>
-nnoremap <leader>rg :Rg 
+nnoremap <leader>rg :Rg
 nnoremap <leader>rl :source $MYVIMRC<cr>
 nnoremap <leader>rv <C-w><C-v><C-l>:e $MYVIMRC<cr>
 nnoremap <leader>w <C-w>v
@@ -227,7 +227,7 @@ augroup vimrcEx
   autocmd FileType python,Dockerfile set ts=4 sw=4 sts=4 et
   autocmd! BufRead,BufNewFile .babelrc setfiletype json
   autocmd! BufRead,BufNewFile .eslintrc setfiletype json
-  autocmd! BufRead,BufNewFile *.sass setfiletype sass 
+  autocmd! BufRead,BufNewFile *.sass setfiletype sass
   autocmd BufRead *.mkd  set ai formatoptions=tcroqn2 comments=n:>
   autocmd BufRead *.markdown  set ai formatoptions=tcroqn2 comments=n:>
   autocmd BufNewFile,BufRead *.tsx,*.jsx set filetype=typescriptreact
@@ -294,46 +294,60 @@ au VimEnter * inoremap <tab> <c-r>=InsertTabWrapper()<CR>
 " COPY/PASTE
 "
 
-function PBCopy() range
-  echo system('echo '.shellescape(join(getline(a:firstline, a:lastline), "\n")).'| clip.exe')
-endfunction
-
-map <leader>p :read !powershell.exe Get-Clipboard<CR>
-map <leader>y :'<,'>call PBCopy()<CR>
-
-"
-" AG: THE SILVER SEARCHER
-"
-
-let g:ag_lhandler="copen 20"
-let g:ag_qhandler="copen 20"
-nnoremap <leader>A :Ag!<space>
-
-" OPAM CONFIG (unchanged)
-let s:opam_share_dir = system("opam config var share")
-let s:opam_share_dir = substitute(s:opam_share_dir, '[\r\n]*$', '', '')
-let s:opam_configuration = {}
-function! OpamConfOcpIndent()
-  execute "set rtp^=" . s:opam_share_dir . "/ocp-indent/vim"
-endfunction
-let s:opam_configuration['ocp-indent'] = function('OpamConfOcpIndent')
-function! OpamConfOcpIndex()
-  execute "set rtp+=" . s:opam_share_dir . "/ocp-index/vim"
-endfunction
-let s:opam_configuration['ocp-index'] = function('OpamConfOcpIndex')
-function! OpamConfMerlin()
-  let l:dir = s:opam_share_dir . "/merlin/vim"
-  execute "set rtp+=" . l:dir
-endfunction
-let s:opam_configuration['merlin'] = function('OpamConfMerlin')
-let s:opam_packages = ["ocp-indent", "ocp-index", "merlin"]
-let s:opam_check_cmdline = ["opam list --installed --short --safe --color=never"] + s:opam_packages
-let s:opam_available_tools = split(system(join(s:opam_check_cmdline)))
-for tool in s:opam_packages
-  if count(s:opam_available_tools, tool) > 0
-    call s:opam_configuration[tool]()
+function! GetOS()
+  if has('win32') || has('win64')
+    return 'Windows'
+  elseif has('wsl')
+    return 'WSL'
+  elseif has('macunix')
+    return 'macOS'
+  else
+    return 'Linux'
   endif
-endfor
+endfunction
+
+function! CopyToSystemClipboard() range
+  let os = GetOS()
+  if os == 'Windows'
+    echo system('echo '.shellescape(join(getline(a:firstline, a:lastline), "\n")).'| clip.exe')
+  elseif os == 'WSL'
+    echo system('echo '.shellescape(join(getline(a:firstline, a:lastline), "\n")).'| clip.exe')
+  elseif os == 'macOS'
+    echo system('echo '.shellescape(join(getline(a:firstline, a:lastline), "\n")).'| pbcopy')
+  else
+    if executable('xclip')
+      echo system('echo '.shellescape(join(getline(a:firstline, a:lastline), "\n")).'| xclip -selection clipboard')
+    elseif executable('xsel')
+      echo system('echo '.shellescape(join(getline(a:firstline, a:lastline), "\n")).'| xsel --clipboard --input')
+    else
+      echo "No clipboard tool found. Please install xclip or xsel."
+    endif
+  endif
+endfunction
+
+function! PasteFromSystemClipboard()
+  let os = GetOS()
+  if os == 'Windows'
+    return system('powershell.exe Get-Clipboard')
+  elseif os == 'WSL'
+    return system('powershell.exe Get-Clipboard')
+  elseif os == 'macOS'
+    return system('pbpaste')
+  else
+    if executable('xclip')
+      return system('xclip -selection clipboard -o')
+    elseif executable('xsel')
+      return system('xsel --clipboard --output')
+    else
+      echo "No clipboard tool found. Please install xclip or xsel."
+      return ""
+    endif
+  endif
+endfunction
+
+map <leader>p :call append(line('.'), split(PasteFromSystemClipboard(), '\n'))<CR>
+map <leader>y :'<,'>call CopyToSystemClipboard()<CR>
+
 
 " Autoreload files
 if !exists("g:CheckUpdateStarted")

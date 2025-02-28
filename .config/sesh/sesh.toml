@@ -1,0 +1,150 @@
+#  ███████╗███████╗███████╗██╗  ██╗     ██████╗ ██████╗ ███╗   ██╗███████╗██╗ ██████╗
+#  ██╔════╝██╔════╝██╔════╝██║  ██║    ██╔════╝██╔═══██╗████╗  ██║██╔════╝██║██╔════╝
+#  ███████╗█████╗  ███████╗███████║    ██║     ██║   ██║██╔██╗ ██║█████╗  ██║██║  ███╗
+#  ╚════██║██╔══╝  ╚════██║██╔══██║    ██║     ██║   ██║██║╚██╗██║██╔══╝  ██║██║   ██║
+#  ███████║███████╗███████║██║  ██║    ╚██████╗╚██████╔╝██║ ╚████║██║     ██║╚██████╔╝
+#  ╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝     ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝     ╚═╝ ╚═════╝
+#
+#  Smart session manager for the terminal
+#  https://github.com/joshmedeski/sesh
+
+# ideas / tasks
+
+# TODO: experiment with long-living sesh picker (as session)
+# [[session]]
+# name = "sesh"
+# path = "~/c/dotfiles/.config/sesh"
+# startup_command = "sesh connect \"$(sesh list --icons | fzf)\""
+
+# TODO: implement?
+# [[session_preview]]
+# pattern_folder_has = "README.md"
+# preview_command = "glow -s light {}"
+
+# TODO: potential feature ideas
+# [[session]]
+# name = "session"
+# path = "~/path/to/session"
+# startup_script = "~/git_repos/dotfiles/sesh/bin/spotify.sh"
+# detached = true # never attach to this session, just create it in the background
+# tmuxp = "~/.config/tmux/tmuxp/joshmedeski.com.yml"
+# tmuxinator = "~/.config/tmux/tmuxinator/joshmedeski.com.yml"
+
+# TODO: support wildcard paths
+# [[session_wildcard]]
+# session_path = "~/c/nu/main/packages/*"
+# script_path = "~/.config/sesh/scripts/node_dev"
+
+# notes
+
+# NOTE: bat styles (--style)
+# full, auto, plain, changes, header, header-filename,
+
+# import = ["~/.config/sesh/configs/nu-sesh.toml"]
+blacklist = ["scratch"]
+
+# default
+
+[default_session]
+startup_command = "nvim +GoToFile"
+startup_command_ignore_dirs = ["~/code", "~/.config"]
+preview_command = "eza --all --git --icons --color=always {}"
+
+# common
+
+[[session]]
+name = "Downloads"
+path = "~/Downloads"
+
+[[session]]
+name = "home (~)"
+path = "~"
+
+# mosh
+
+[[session]]
+name = "fat"
+path = "~"
+startup_command = "mosh --server=/usr/local/bin/mosh-server clifton@fat"
+
+[[session]]
+name = "deuce"
+path = "~"
+startup_command = "ssh deuce"
+
+# mana
+
+[[session]]
+name = "prefect"
+path = "~/code/mana/prefect-flows"
+
+[[session]]
+name = "copilot"
+path = "~/code/mana/copilot"
+
+# other projects
+
+[[session]]
+name = "cmt"
+path = "~/code/rust/cmt"
+
+# configs
+
+[[session]]
+name = "vim config"
+path = "~"
+startup_command = "nvim .vimrc"
+
+[[session]]
+name = "tmux config"
+path = "~"
+startup_command = "nvim .tmux.conf.local"
+preview_command = "bat --language=bash --style=snip --color=always ~/.tmux.conf.local"
+
+[[session]]
+name = "sesh config"
+path = "~/.config/sesh"
+startup_command = "nvim sesh.toml"
+preview_command = "bat --language=toml --style=snip --color=always ~/.config/sesh/sesh.toml"
+
+[[session]]
+name = "ghostty config"
+path = "~/Library/Application Support/com.mitchellh.ghostty"
+startup_command = "nvim config"
+
+[[session]]
+name = "/ect/hosts"
+path = "/etc"
+startup_command = "sudo nvim hosts"
+
+# plugins
+
+# [[session]]
+# name = "obsidian plugins"
+# path = "~/c/second-brain/.obsidian/plugins"
+# startup_command = "sesh connect (ls | fzf --ansi --no-border --preview 'glow -s light {}/README.md' --preview-window=right:85,border-none) && exit"
+
+# tools
+
+# [[session]]
+# name = "ollama"
+# path = "~/.ollama"
+# startup_command = 'grc tail -f ~/.ollama/logs/server.log'
+
+# [[session]]
+# name = "macmon"
+# path = "~/"
+# startup_command = "macmon"
+
+# [[session]]
+# name = "cava (audio visualizer)"
+# path = "~/.config/cava"
+# startup_command = "tmux set-option -t cava status off && cava"
+
+# other
+
+# [[session]]
+# name = "perplexica"
+# path = "~/c/perplexica"
+# startup_command = "docker compose up -d"
+
