@@ -5,9 +5,22 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
+# Initialize Homebrew for macOS or Linux
+if [[ -f "/opt/homebrew/bin/brew" ]]; then
+  # macOS ARM (Apple Silicon)
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+elif [[ -f "/usr/local/bin/brew" ]]; then
+  # macOS Intel
+  eval "$(/usr/local/bin/brew shellenv)"
+elif [[ -f "/home/linuxbrew/.linuxbrew/bin/brew" ]]; then
+  # Linux (standard Linuxbrew location)
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+elif [[ -f "$HOME/.linuxbrew/bin/brew" ]]; then
+  # Linux (alternative user-specific location)
+  eval "$($HOME/.linuxbrew/bin/brew shellenv)"
+fi
+
 if type brew &>/dev/null; then
-  # If you're using macOS or Linux with Homebrew, you'll want this enabled
-  eval "$(brew shellenv)"
   export FPATH="$(brew --prefix)/share/zsh/site-functions:$FPATH"
 fi
 
