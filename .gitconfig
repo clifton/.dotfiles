@@ -1,0 +1,100 @@
+[alias]
+  ## Stashing
+  stash-peek = diff stash@{0}^1 stash@{0}
+  stash-pick = checkout stash@{0} --
+
+  ## Merging
+  accept-ours = "!f() { files=\"$@\"; [ -z $files ] && files='.'; git checkout --ours -- $files; git add -u $files; }; f"
+  accept-theirs = "!f() { files=\"$@\"; [ -z $files ] && files='.'; git checkout --theirs -- $files; git add -u $files; }; f"
+
+  blame = blame -mw
+
+  ## Logging
+  lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+  l50 = "!git log --abbrev-commit --date=short --pretty=format:'%x00%h%x00%cd%x00%s%x00%an%x00%d' | gawk -F '\\0' '{ printf \"%s\\033[31m%s\\033[0m \\033[32m%s\\033[0m  %-50s \\033[35;1m%s\\033[0m\\033[33m%s\\n\", $1, $2, $3, gensub(/(.{49}).{2,}/, \"\\\\1…\",\"g\",$4), $5, $6 }' | less -R"
+  l80 = "!git log --abbrev-commit --date=short --pretty=format:'%x00%h%x00%cd%x00%s%x00%an%x00%d' | gawk -F '\\0' '{ printf \"%s\\033[31m%s\\033[0m \\033[32m%s\\033[0m  %-80s \\033[35;1m%s\\033[0m\\033[33m%s\\n\", $1, $2, $3, gensub(/(.{79}).{2,}/, \"\\\\1…\",\"g\",$4), $5, $6 }' | less -R"
+  lg50 = "!git log --graph --color=always --abbrev-commit --date=relative --pretty=format:'%x00%h%x00%s%x00%cd%x00%an%x00%d' | gawk -F '\\0' '{ printf \"%s\\033[31m%s\\033[0m %-50s \\033[32m%14s\\033[0m \\033[35;1m%s\\033[0m\\033[33m%s\\n\", $1, $2, gensub(/(.{49}).{2,}/, \"\\\\1…\",\"g\",$3), $4, $5, $6 }' | less -R"
+  lg80 = "!git log --graph --color=always --abbrev-commit --date=relative --pretty=format:'%x00%h%x00%s%x00%cd%x00%an%x00%d' | gawk -F '\\0' '{ printf \"%s\\033[31m%s\\033[0m %-80s \\033[32m%14s\\033[0m \\033[35;1m%s\\033[0m\\033[33m%s\\n\", $1, $2, gensub(/(.{79}).{2,}/, \"\\\\1…\",\"g\",$3), $4, $5, $6 }' | less -R"
+
+  ## Convenience
+  st = status --short
+  c = commit -v
+  co = checkout
+  b = branch
+  cb = checkout -b
+  pick = cherry-pick
+
+  # Any files added/removed will be ammended to latest commit
+  amend = commit --amend -C HEAD
+
+  # Show all ignored files in repo
+  ignored = ls-files --exclude-standard --ignored --others
+
+[core]
+  excludesfile = ~/.gitignore
+  whitespace = fix,tab-in-indent,trailing-space
+  autocrlf = false
+	editor = /opt/homebrew/bin/nvim -u NORC
+  # --quit-if-one-screen --RAW-CONTROL-CHARS --no-init
+  pager = less -FRX
+
+[color]
+  ui = auto
+
+[merge]
+  log = true
+  stat = true
+
+[url "git@github.com:"]
+  insteadOf = "gh:"
+  pushInsteadOf = "github:"
+  pushInsteadOf = "git://github.com/"
+
+[url "git://github.com/"]
+  insteadOf = "github:"
+
+[url "git@gist.github.com:"]
+  insteadOf = "gst:"
+  pushInsteadOf = "gist:"
+  pushInsteadOf = "git://gist.github.com/"
+
+[url "git://gist.github.com/"]
+  insteadOf = "gist:"
+
+[user]
+  name = "Clifton King"
+  email = cliftonk@gmail.com
+
+[gist]
+  private = yes
+  browse = yes
+  extension = diff
+
+[hub]
+  protocol = ssh
+
+[advice]
+  pushNonFastForward = false
+  statusHints = false
+
+[branch]
+  autosetuprebase = always
+
+[push]
+  default = upstream
+
+[rerere]
+  enabled = true
+
+[diff]
+  mnemonicprefix = true
+  rename = copy
+
+[grep]
+  lineNumber = true
+
+[interactive]
+  singlekey = true
+
+[init]
+	defaultBranch = main
