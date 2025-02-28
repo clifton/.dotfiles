@@ -7,17 +7,11 @@ fi
 
 # Initialize Homebrew for macOS or Linux
 if [[ -f "/opt/homebrew/bin/brew" ]]; then
-  # macOS ARM (Apple Silicon)
+  # macOS
   eval "$(/opt/homebrew/bin/brew shellenv)"
-elif [[ -f "/usr/local/bin/brew" ]]; then
-  # macOS Intel
-  eval "$(/usr/local/bin/brew shellenv)"
 elif [[ -f "/home/linuxbrew/.linuxbrew/bin/brew" ]]; then
-  # Linux (standard Linuxbrew location)
+  # Linux
   eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-elif [[ -f "$HOME/.linuxbrew/bin/brew" ]]; then
-  # Linux (alternative user-specific location)
-  eval "$($HOME/.linuxbrew/bin/brew shellenv)"
 fi
 
 if type brew &>/dev/null; then
