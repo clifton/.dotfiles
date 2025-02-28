@@ -543,6 +543,9 @@ bind-key "K" display-popup -E -w 40% "sesh connect \"$(
   sesh list -i | gum filter --limit 1 --placeholder 'Pick a sesh' --prompt='⚡'
 )\""
 
+# use session name as title
+set-option -g set-titles on
+
 # bind-key "J" run-shell "sesh connect \"$(
 #   sesh list -i | fzf-tmux -p 55%,60% \
 #     --no-sort --border-label ' sesh ' --prompt '⚡  ' \

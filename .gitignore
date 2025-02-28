@@ -1,3 +1,4 @@
 .env
 .ssh/known_hosts*
 .ssh/id_*
+*.swp
