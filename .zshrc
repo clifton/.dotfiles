@@ -93,6 +93,14 @@ export NVM_COMPLETION=true
 export NVM_SYMLINK_CURRENT="true"
 zinit wait lucid light-mode for lukechilds/zsh-nvm
 
-source $HOME/.env
 source $HOME/.aliases
-source $HOME/.cargo/env
+
+# only source the env file if it exists
+if [ -f "$HOME/.env" ]; then
+  source $HOME/.env
+fi
+
+# only source the cargo env file if it exists
+if [ -f "$HOME/.cargo/env" ]; then
+  source $HOME/.cargo/env
+fi
