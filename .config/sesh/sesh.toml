@@ -64,18 +64,19 @@ path = "~"
 
 [[session]]
 name = "fat"
-path = "~"
-startup_command = "mosh --server=/usr/local/bin/mosh-server clifton@fat"
+startup_command = "ssh fat"
 
 [[session]]
 name = "deuce"
-path = "~"
-startup_command = "mosh deuce"
+startup_command = "ssh deuce"
 
 [[session]]
 name = "pop"
-path = "~"
-startup_command = "mosh pop"
+startup_command = "ssh pop"
+
+[[session]]
+name = "wsl2"
+startup_command = "ssh wsl2"
 
 # mana
 
