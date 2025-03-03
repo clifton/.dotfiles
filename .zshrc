@@ -46,6 +46,7 @@ zinit light birdhackor/zsh-eza-ls-plugin
 zinit light MenkeTechnologies/zsh-cargo-completion
 
 # Add in snippets
+zinit snippet OMZL::async_prompt.zsh
 zinit snippet OMZL::git.zsh
 zinit snippet OMZP::git
 zinit snippet OMZP::sudo

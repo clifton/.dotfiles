@@ -16,6 +16,16 @@ else
   alias lsd="ls -l | grep '^d'"
 fi
 
+# keychain for wsl2
+if command -v /usr/bin/keychain &> /dev/null; then
+  alias keys='eval `keychain --eval --agents ssh id_rsa`'
+fi
+
+# cursor alias for wsl2
+if grep -q "microsoft" /proc/version; then
+  alias cursor="$HOME/.cursor/resources/app/bin/cursor"
+fi
+
 function sc {
   sesh connect "$(sesh list -i | gum filter --limit 1 --placeholder 'Pick a sesh' --prompt='⚡')"
 }
