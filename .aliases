@@ -22,7 +22,7 @@ if command -v /usr/bin/keychain &> /dev/null; then
 fi
 
 # cursor alias for wsl2
-if grep -q "microsoft" /proc/version; then
+if [ -f /proc/version ] && grep -q "microsoft" /proc/version; then
   alias cursor="$HOME/.cursor/resources/app/bin/cursor"
 fi
 
