@@ -34,9 +34,9 @@
   excludesfile = ~/.gitignore
   whitespace = fix,tab-in-indent,trailing-space
   autocrlf = false
-	editor = nvim -u NORC
+  editor = nvim -u NORC
   # --quit-if-one-screen --RAW-CONTROL-CHARS --no-init
-  pager = less -FRX
+  pager = delta
 
 [color]
   ui = auto
@@ -44,6 +44,7 @@
 [merge]
   log = true
   stat = true
+  conflictStyle = zdiff3
 
 [url "git@github.com:"]
   insteadOf = "gh:"
@@ -95,6 +96,9 @@
 
 [interactive]
   singlekey = true
+  diffFilter = delta --color-only
 
 [init]
-	defaultBranch = main
+  defaultBranch = main
+[delta]
+  navigate = true
