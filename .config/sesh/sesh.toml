@@ -60,6 +60,12 @@ path = "~/Downloads"
 name = "home (~)"
 path = "~"
 
+[[session]]
+name = "dotfiles"
+path = "~/.dotfiles"
+# startup_command = "nvim +GoToFile"
+startup_command = "tree"
+
 # mosh
 
 [[session]]
@@ -77,6 +83,10 @@ startup_command = "ssh pop"
 [[session]]
 name = "wsl2"
 startup_command = "ssh wsl2"
+
+[[session]]
+name = "gateway"
+startup_command = "ssh gateway"
 
 # mana
 

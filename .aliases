@@ -6,7 +6,7 @@ alias ...="cd ../.."
 
 # Check if eza is installed
 if command -v eza &> /dev/null; then
-  alias tree="eza $eza_params --tree --group-directories-first"
+  alias tree="eza $eza_params --tree --group-directories-first --git --git-ignore --all"
   alias lsd="eza $eza_params --only-dirs -a"
 else
   # Fallback to ls if eza is not available
