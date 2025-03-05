@@ -455,12 +455,9 @@ tmux_conf_uninstall_plugins_on_reload=true
 # visit https://github.com/tmux-plugins for available plugins
 set -g @plugin 'tmux-plugins/tmux-copycat'
 set -g @plugin 'tmux-plugins/tmux-cpu'
-set -g @plugin 'tmux-plugins/tmux-resurrect'
-set -g @plugin 'tmux-plugins/tmux-continuum'
 set -g @plugin 'git@github.com:joshmedeski/tmux-fzf-url'
 set -g @plugin 'fcsonline/tmux-thumbs'
 set -g @plugin 'omerxx/tmux-floax'
-set -g @continuum-restore 'on'
 set -g @fzf-url-fzf-options '-p 60%,30% --prompt="   " --border-label=" Open URL "'
 set -g @fzf-url-history-limit '2000'
 set -g @thumbs-command 'echo -n {} | pbcopy' # copy to clipboard

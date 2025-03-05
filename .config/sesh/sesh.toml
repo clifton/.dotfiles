@@ -134,9 +134,9 @@ path = "/etc"
 startup_command = "sudo nvim hosts"
 
 [[session]]
-name = "yabbai config"
+name = "yabai config"
 path = "~/.dotfiles"
-startup_command = "nvim -O .skhdrc .yabairc"
+startup_command = "nvim -O .yabairc .skhdrc"
 
 
 # plugins
