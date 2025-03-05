@@ -133,6 +133,12 @@ name = "/ect/hosts"
 path = "/etc"
 startup_command = "sudo nvim hosts"
 
+[[session]]
+name = "yabbai config"
+path = "~/.dotfiles"
+startup_command = "nvim -O .skhdrc .yabairc"
+
+
 # plugins
 
 # [[session]]
