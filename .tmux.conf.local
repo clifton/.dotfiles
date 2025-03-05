@@ -352,7 +352,8 @@ tmux_conf_battery_hbar_palette="gradient"
 #   - gradient(colour_fg_1,colour_fg_2,...,colour_fg_n)
 # tmux_conf_battery_vbar_palette="gradient"
 #tmux_conf_battery_vbar_palette="#d70000,#ff5f00,#5fff00"  # red, orange, green
-tmux_conf_battery_vbar_palette="gradient(#d70000,#e84118,#f39c12,#f1c40f,#e67e22,#2ecc71,#27ae60,#1abc9c,#16a085,#95a5a6)"  # red -> orange -> yellow -> green -> gray
+tmux_conf_battery_vbar_palette="gradient(#d70000,#e84118,#f39c12,#f1c40f,#e67e22,#2ecc71,#27ae60,#1abc9c,#16a085,$tmux_conf_theme_colour_3)"
+# red -> orange -> yellow -> green -> gray
 
 # symbols used to indicate whether battery is charging or discharging
 tmux_conf_battery_status_charging="↑"       # U+2191
@@ -456,7 +457,15 @@ set -g @plugin 'tmux-plugins/tmux-copycat'
 set -g @plugin 'tmux-plugins/tmux-cpu'
 set -g @plugin 'tmux-plugins/tmux-resurrect'
 set -g @plugin 'tmux-plugins/tmux-continuum'
+set -g @plugin 'git@github.com:joshmedeski/tmux-fzf-url'
+set -g @plugin 'fcsonline/tmux-thumbs'
+set -g @plugin 'omerxx/tmux-floax'
 set -g @continuum-restore 'on'
+set -g @fzf-url-fzf-options '-p 60%,30% --prompt="   " --border-label=" Open URL "'
+set -g @fzf-url-history-limit '2000'
+set -g @thumbs-command 'echo -n {} | pbcopy' # copy to clipboard
+set -g @thumbs-key C
+set -g @floax-bind H
 
 # -- custom variables ----------------------------------------------------------
 
@@ -538,9 +547,31 @@ bind e new-window -n 'tmux cfg' -e EDITOR="$EDITOR" \
 bind-key x kill-pane # skip "kill-pane 1? (y/n)" prompt
 set -g detach-on-destroy off # don't exit from tmux when closing a session
 
-bind-key "K" display-popup -E -w 40% "sesh connect \"$(
-  sesh list -i | gum filter --limit 1 --placeholder 'Pick a sesh' --prompt='⚡'
+# bind-key "K" display-popup -E -w 40% "sesh connect \"$(
+#   sesh list -i | gum filter --limit 1 --placeholder 'Pick a sesh' --prompt='⚡'
+# )\""
+
+bind-key "K" run-shell "sesh connect \"$(
+  sesh list --icons --hide-duplicates | fzf-tmux -p 100%,100% --no-border \
+    --ansi \
+    --list-border \
+    --no-sort --prompt '⚡  ' \
+    --color 'list-border:6,input-border:3,preview-border:4,header-bg:-1,header-border:6' \
+    --input-border \
+    --header-border \
+    --bind 'tab:down,btab:up' \
+    --bind 'ctrl-b:abort' \
+    --bind 'ctrl-a:change-prompt(⚡  )+reload(sesh list --icons)' \
+    --bind 'ctrl-t:change-prompt(  )+reload(sesh list -t --icons)' \
+    --bind 'ctrl-g:change-prompt(⚙️  )+reload(sesh list -c --icons)' \
+    --bind 'ctrl-x:change-prompt(📁  )+reload(sesh list -z --icons)' \
+    --bind 'ctrl-f:change-prompt(🔎  )+reload(fd -H -d 2 -t d -E .Trash . ~)' \
+    --bind 'ctrl-d:execute(tmux kill-session -t {2..})+change-prompt(⚡  )+reload(sesh list --icons)' \
+    --preview-window 'right:70%' \
+    --preview 'sesh preview {}' \
 )\""
+
+bind -N "last-session (via sesh) " L run-shell "sesh last"
 
 # status bar
 set-option -g set-titles on

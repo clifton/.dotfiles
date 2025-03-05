@@ -70,3 +70,8 @@ confirm-close-surface = false
 # tmux keybinds
 keybind = cmd+k=text:\x01K
 keybind = cmd+j=text:\x01J
+keybind = cmd+l=text:\x01L
+# open url
+keybind = cmd+o=text:\x01\x75
+# keybind = cmd+c=text:\x01[ # tmux thumbs
+
