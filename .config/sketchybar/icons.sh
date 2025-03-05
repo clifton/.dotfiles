@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# download the font
+APP_FONT_URL="https://github.com/kvndrsslr/sketchybar-app-font/releases/download/v2.0.32/sketchybar-app-font.ttf"
+(stat $HOME/Library/Fonts/sketchybar-app-font.ttf || curl -L $APP_FONT_URL -o $HOME/Library/Fonts/sketchybar-app-font.ttf) &>/dev/null
+
 # General Icons
 LOADING=􀖇
 APPLE=􀣺

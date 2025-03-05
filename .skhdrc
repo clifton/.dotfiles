@@ -7,7 +7,10 @@ alt - k : yabai -m window --focus north
 alt - l : yabai -m window --focus east
 
 # swap managed window
-# shift + alt - h : yabai -m window --swap north
+shift + alt - h : yabai -m window --swap west
+shift + alt - j : yabai -m window --swap south
+shift + alt - k : yabai -m window --swap north
+shift + alt - l : yabai -m window --swap east
 
 # move managed window
 # shift + cmd - h : yabai -m window --warp east
@@ -85,6 +88,28 @@ alt - e : yabai -m window --toggle split
 # float / unfloat window and center on screen
 # alt - t : yabai -m window --toggle float --grid 4:4:1:1:2:2
 
+# launch_or_focus() {
+#   local app_name="$1"
+
+#   # Check if the application is running
+#   if ! pgrep -xi "$app_name" > /dev/null; then
+#     open -a "$app_name"
+#     sleep 0.5  # Adjust sleep duration as needed
+#   fi
+
+#   # Get the window ID of the application
+#   local app_id
+#   app_id=$(yabai -m query --windows | jq -r --arg app "$app_name" '.[] | select(.app == $app) | .id' | head -n 1)
+
+#   if [ -n "$app_id" ]; then
+#     local current_space
+#     current_space=$(yabai -m query --spaces --space | jq '.index')
+#     yabai -m window --focus "$app_id"
+#     yabai -m window --space "$current_space"
+#     yabai -m window --focus "$app_id"
+#   fi
+# }
+
 # toggle sticky(+float), topmost, picture-in-picture
 # alt - p : yabai -m window --toggle sticky --toggle topmost --toggle pip
 # App shortcuts 
@@ -96,6 +121,6 @@ shift + alt - n : open -a 'Notion'
 shift + alt - o : open -a 'Obsidian'
 shift + alt - d : open -a 'Discord'
 shift + alt - g : open -a 'Granola'
-alt - a : open -a 'ChatGPT'
-alt - u : open -a 'Google Chrome'
-alt - r : open -a 'OBS'
+shift + alt - q : open -a 'Messages'
+
+# alt - a : open -a 'ChatGPT'
