@@ -115,3 +115,11 @@ if [ -f "$HOME/.cargo/env" ]; then
 fi
 
 export PATH="$PATH:$HOME/.local/bin"
+
+# pnpm
+export PNPM_HOME="/Users/clifton/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end

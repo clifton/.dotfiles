@@ -104,6 +104,10 @@ path = "~/code/mana/copilot"
 name = "cmt"
 path = "~/code/rust/cmt"
 
+[[session]]
+name = "autobuy"
+path = "~/code/autobuy"
+
 # configs
 
 [[session]]
