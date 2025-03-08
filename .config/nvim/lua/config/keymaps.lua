@@ -38,6 +38,14 @@ map("n", "<C-l>", "<C-w>l")
 -- File operations
 map("c", "%%", function() return vim.fn.expand('%:h') .. '/' end, { expr = true })
 map("n", "<leader>e", ":edit <C-R>=expand('%:h').'/'<CR>")
+
+-- Manually reload Neovim configuration
+map("n", "<leader>rc", function()
+  -- Source init.lua
+  vim.cmd('source ' .. vim.fn.stdpath('config') .. '/init.lua')
+  vim.notify("Neovim configuration reloaded", vim.log.levels.INFO)
+end, { desc = "Reload Neovim configuration" })
+
 map("n", "<leader>rl", ":source $MYVIMRC<CR>")
 map("n", "<leader>rv", "<C-w><C-v><C-l>:e $MYVIMRC<CR>")
 map("n", "<leader>rm", function()
