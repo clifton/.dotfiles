@@ -46,7 +46,7 @@ blacklist = ["scratch"]
 # default
 
 [default_session]
-# startup_command = "nvim +GoToFile"
+# startup_command = "nvim +PickFiles"
 startup_command_ignore_dirs = ["~/code", "~/.config", "~", "~/Downloads/"]
 preview_command = "eza --all --git --icons --color=always {}"
 
@@ -63,7 +63,7 @@ path = "~"
 [[session]]
 name = "dotfiles"
 path = "~/.dotfiles"
-# startup_command = "nvim +GoToFile"
+# startup_command = "nvim +PickFiles"
 startup_command = "tree"
 
 # mosh
@@ -113,7 +113,7 @@ path = "~/code/autobuy"
 [[session]]
 name = "nvim config"
 path = "~/.dotfiles/.config/nvim"
-startup_command = "nvim +Telescope smart_open cwd_only=true"
+startup_command = "nvim +PickFiles"
 
 [[session]]
 name = "tmux config"
