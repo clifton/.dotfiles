@@ -63,6 +63,7 @@ Local leader key: `\`
 
 - `<C-p>` - Find files in current directory
 - `,f` - Find files
+- `,fa` - Find all files (including hidden, ignoring gitignore)
 - `,.` - Recent files
 - `,gb` - List buffers
 - `,gf` - Find files in current file's directory
@@ -138,6 +139,30 @@ This configuration uses the following mini.nvim modules:
    ```
 
    Lazy.nvim will automatically install all plugins on the first run.
+
+## Startup Commands
+
+You can start Neovim with the file finder already open:
+
+```bash
+# Open mini.pick file finder on startup
+nvim +PickFiles
+
+# Open mini.pick file finder with specific directory
+nvim +PickFiles\ cwd=/path/to/directory
+
+# Open mini.pick file finder with gitignore disabled
+nvim +PickFiles\ no_ignore=true
+
+# Combine options
+nvim +PickFiles\ "cwd=/path/to/directory no_ignore=true"
+```
+
+Note: If you're using this in a shell script or alias, you may need to escape the backslash:
+```bash
+# In a shell script or alias
+alias nv='nvim +PickFiles\\ cwd=.'
+```
 
 ## Customization
 

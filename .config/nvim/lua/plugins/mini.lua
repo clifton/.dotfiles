@@ -199,6 +199,25 @@ return {
             height = 0.4,
           },
         },
+        -- File picker configuration
+        source = {
+          show_hidden = true,
+        },
+        -- File picker configuration
+        file = {
+          -- Show hidden files (starting with dot)
+          show_hidden = true,
+          -- Use .gitignore for filtering
+          git_ignore = true,
+          -- Explicitly ignore these patterns
+          exclude_patterns = {
+            '%.git/',
+            'node_modules/',
+            'target/',
+            'build/',
+            'dist/',
+          },
+        },
       })
 
       -- mini.splitjoin - Split and join arguments, arrays, etc.
