@@ -61,13 +61,13 @@ vim.api.nvim_create_autocmd("FileType", {
 })
 
 vim.api.nvim_create_autocmd("FileType", {
-  pattern = {"ruby", "haml", "eruby", "yaml", "html", "javascript", "sass", "cucumber"},
+  pattern = { "ruby", "haml", "eruby", "yaml", "html", "javascript", "sass", "cucumber" },
   command = "setlocal ai sw=2 sts=2 et",
   group = augroup,
 })
 
 vim.api.nvim_create_autocmd("FileType", {
-  pattern = {"python", "Dockerfile"},
+  pattern = { "python", "Dockerfile" },
   command = "setlocal ts=4 sw=4 sts=4 et",
   group = augroup,
 })
@@ -86,8 +86,9 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 
 -- Auto reload files
 vim.opt.autoread = true
-vim.api.nvim_create_autocmd({"FocusGained", "BufEnter", "CursorHold", "CursorHoldI"}, {
+vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold", "CursorHoldI" }, {
   pattern = "*",
   command = "if mode() != 'c' | checktime | endif",
   group = augroup,
 })
+

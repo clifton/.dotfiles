@@ -10,6 +10,7 @@ A clean, modern, and minimalist Neovim configuration using lazy.nvim as the pack
 - 📦 Comprehensive mini.nvim plugins for lightweight functionality
 - 🔍 mini.pick for fuzzy finding (replacing Telescope)
 - 🧠 LSP support with auto-completion
+- 🤖 Claude AI integration with Avante.nvim
 - ⌨️ Sensible keymaps
 - ✨ Smooth animations with mini.animate
 
@@ -24,7 +25,9 @@ A clean, modern, and minimalist Neovim configuration using lazy.nvim as the pack
 │   │   ├── lazy.lua         # Lazy.nvim setup
 │   │   └── options.lua      # Neovim options
 │   └── plugins
+│       ├── avante.lua       # Avante.nvim (Claude AI) configuration
 │       ├── core.lua         # Core plugins
+│       ├── format.lua       # Formatting configuration
 │       ├── lsp.lua          # LSP configuration
 │       ├── mini.lua         # Mini.nvim plugins
 │       └── pick.lua         # mini.pick configuration (replacing telescope.lua)
@@ -117,6 +120,24 @@ Format on save is enabled by default for all supported file types. Formatting is
 
 If a formatter isn't available, it will fall back to LSP formatting.
 
+### Avante.nvim (Claude AI)
+
+- `,a` - Toggle Avante window
+- `<Ctrl-s>` - Submit prompt (in Avante window)
+- `<Ctrl-l>` - Clear conversation (in Avante window)
+- `q` - Close Avante window
+- `<Ctrl-b/f>` - Scroll up/down in Avante window
+
+#### Inline Completions
+
+- `<Alt-l>` - Accept suggestion
+- `<Alt-w>` - Accept word
+- `<Alt-o>` - Accept line
+- `<Alt-]>` - Next suggestion
+- `<Alt-[>` - Previous suggestion
+- `<Ctrl-]>` - Dismiss suggestion
+- `,ti` - Toggle Avante inline completions
+
 ## mini.nvim Modules Used
 
 This configuration uses the following mini.nvim modules:
@@ -157,6 +178,12 @@ This configuration uses the following mini.nvim modules:
    ```
 
    Lazy.nvim will automatically install all plugins on the first run.
+
+4. Set up Claude API key:
+   ```bash
+   # Add this to your .bashrc, .zshrc, or equivalent
+   export ANTHROPIC_API_KEY="your_claude_api_key_here"
+   ```
 
 ## Startup Commands
 
