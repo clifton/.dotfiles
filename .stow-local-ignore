@@ -9,6 +9,7 @@ _darcs
 .+~          # emacs backup files
 \#.*\#       # emacs autosave files
 \*.swp$
+\.old
 
 ^/README.*
 ^/LICENSE.*

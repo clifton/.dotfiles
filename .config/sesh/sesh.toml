@@ -111,9 +111,9 @@ path = "~/code/autobuy"
 # configs
 
 [[session]]
-name = "vim config"
-path = "~/.dotfiles"
-startup_command = "nvim .vimrc"
+name = "nvim config"
+path = "~/.dotfiles/.config/nvim"
+startup_command = "nvim +Telescope smart_open cwd_only=true"
 
 [[session]]
 name = "tmux config"
