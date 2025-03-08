@@ -99,6 +99,24 @@ Local leader key: `\`
 - `,ca` - Code action
 - `K` - Hover documentation
 
+### Formatting
+
+- `<F3>` - Format current buffer
+- `,cf` - Format current buffer
+- `,tf` - Toggle format on save
+- `:ToggleFormatOnSave` - Toggle format on save (command)
+
+Format on save is enabled by default for all supported file types. Formatting is handled by conform.nvim with the following formatters:
+
+- stylua (Lua)
+- prettier (JavaScript/TypeScript/HTML/CSS/JSON/YAML/Markdown)
+- ruff_format (Python)
+- shfmt (Shell scripts)
+- rustfmt (Rust)
+- taplo (TOML)
+
+If a formatter isn't available, it will fall back to LSP formatting.
+
 ## mini.nvim Modules Used
 
 This configuration uses the following mini.nvim modules:
