@@ -39,256 +39,94 @@ return {
             vim.keymap.set("n", keys, func, { buffer = event.buf, desc = desc })
           end
 
-          -- Create helper functions for mini.pick LSP integration
-          local pick_lsp = {}
+          -- Create helper functions for fzf-lua LSP integration
+          local fzf_lsp = {}
+          local fzf = require("fzf-lua")
 
           -- LSP definitions
-          pick_lsp.definitions = function()
-            local params = vim.lsp.util.make_position_params()
-            vim.lsp.buf_request(0, 'textDocument/definition', params, function(_, result)
-              if not result or vim.tbl_isempty(result) then
-                vim.notify('No definitions found', vim.log.levels.INFO)
-                return
-              end
-              require('mini.pick').start({
-                source = {
-                  items = result,
-                  name_extractor = function(item)
-                    local uri = item.uri or item.targetUri
-                    local range = item.range or item.targetSelectionRange
-                    local fname = vim.uri_to_fname(uri)
-                    local row = range.start.line + 1
-                    local col = range.start.character + 1
-                    return string.format('%s:%d:%d', fname, row, col)
-                  end,
-                  preview = function(_, item)
-                    local uri = item.uri or item.targetUri
-                    local range = item.range or item.targetSelectionRange
-                    local fname = vim.uri_to_fname(uri)
-                    local row = range.start.line + 1
-                    return require('mini.pick.builtin').file_preview(fname, row)
-                  end,
-                  action = function(item)
-                    local uri = item.uri or item.targetUri
-                    local range = item.range or item.targetSelectionRange
-                    vim.cmd('edit ' .. vim.uri_to_fname(uri))
-                    vim.api.nvim_win_set_cursor(0, { range.start.line + 1, range.start.character })
-                  end,
-                },
-              })
-            end)
+          fzf_lsp.definitions = function()
+            fzf.lsp_definitions({
+              jump1 = false,
+              ignore_current_line = true,
+              include_declaration = true,
+              preview = {
+                layout = "vertical",
+                vertical = "up:60%",
+              },
+            })
           end
 
           -- LSP references
-          pick_lsp.references = function()
-            local params = vim.lsp.util.make_position_params()
-            params.context = { includeDeclaration = true }
-            vim.lsp.buf_request(0, 'textDocument/references', params, function(_, result)
-              if not result or vim.tbl_isempty(result) then
-                vim.notify('No references found', vim.log.levels.INFO)
-                return
-              end
-              require('mini.pick').start({
-                source = {
-                  items = result,
-                  name_extractor = function(item)
-                    local uri = item.uri
-                    local range = item.range
-                    local fname = vim.uri_to_fname(uri)
-                    local row = range.start.line + 1
-                    local col = range.start.character + 1
-                    return string.format('%s:%d:%d', fname, row, col)
-                  end,
-                  preview = function(_, item)
-                    local uri = item.uri
-                    local range = item.range
-                    local fname = vim.uri_to_fname(uri)
-                    local row = range.start.line + 1
-                    return require('mini.pick.builtin').file_preview(fname, row)
-                  end,
-                  action = function(item)
-                    local uri = item.uri
-                    local range = item.range
-                    vim.cmd('edit ' .. vim.uri_to_fname(uri))
-                    vim.api.nvim_win_set_cursor(0, { range.start.line + 1, range.start.character })
-                  end,
-                },
-              })
-            end)
+          fzf_lsp.references = function()
+            fzf.lsp_references({
+              jump1 = false,
+              ignore_current_line = true,
+              include_declaration = true,
+              preview = {
+                layout = "vertical",
+                vertical = "up:60%",
+              },
+            })
           end
 
           -- LSP implementations
-          pick_lsp.implementations = function()
-            local params = vim.lsp.util.make_position_params()
-            vim.lsp.buf_request(0, 'textDocument/implementation', params, function(_, result)
-              if not result or vim.tbl_isempty(result) then
-                vim.notify('No implementations found', vim.log.levels.INFO)
-                return
-              end
-              require('mini.pick').start({
-                source = {
-                  items = result,
-                  name_extractor = function(item)
-                    local uri = item.uri
-                    local range = item.range
-                    local fname = vim.uri_to_fname(uri)
-                    local row = range.start.line + 1
-                    local col = range.start.character + 1
-                    return string.format('%s:%d:%d', fname, row, col)
-                  end,
-                  preview = function(_, item)
-                    local uri = item.uri
-                    local range = item.range
-                    local fname = vim.uri_to_fname(uri)
-                    local row = range.start.line + 1
-                    return require('mini.pick.builtin').file_preview(fname, row)
-                  end,
-                  action = function(item)
-                    local uri = item.uri
-                    local range = item.range
-                    vim.cmd('edit ' .. vim.uri_to_fname(uri))
-                    vim.api.nvim_win_set_cursor(0, { range.start.line + 1, range.start.character })
-                  end,
-                },
-              })
-            end)
+          fzf_lsp.implementations = function()
+            fzf.lsp_implementations({
+              jump1 = false,
+              ignore_current_line = true,
+              preview = {
+                layout = "vertical",
+                vertical = "up:60%",
+              },
+            })
           end
 
           -- LSP type definitions
-          pick_lsp.type_definitions = function()
-            local params = vim.lsp.util.make_position_params()
-            vim.lsp.buf_request(0, 'textDocument/typeDefinition', params, function(_, result)
-              if not result or vim.tbl_isempty(result) then
-                vim.notify('No type definitions found', vim.log.levels.INFO)
-                return
-              end
-              require('mini.pick').start({
-                source = {
-                  items = result,
-                  name_extractor = function(item)
-                    local uri = item.uri
-                    local range = item.range
-                    local fname = vim.uri_to_fname(uri)
-                    local row = range.start.line + 1
-                    local col = range.start.character + 1
-                    return string.format('%s:%d:%d', fname, row, col)
-                  end,
-                  preview = function(_, item)
-                    local uri = item.uri
-                    local range = item.range
-                    local fname = vim.uri_to_fname(uri)
-                    local row = range.start.line + 1
-                    return require('mini.pick.builtin').file_preview(fname, row)
-                  end,
-                  action = function(item)
-                    local uri = item.uri
-                    local range = item.range
-                    vim.cmd('edit ' .. vim.uri_to_fname(uri))
-                    vim.api.nvim_win_set_cursor(0, { range.start.line + 1, range.start.character })
-                  end,
-                },
-              })
-            end)
+          fzf_lsp.type_definitions = function()
+            fzf.lsp_typedefs({
+              jump1 = false,
+              ignore_current_line = true,
+              preview = {
+                layout = "vertical",
+                vertical = "up:60%",
+              },
+            })
           end
 
           -- LSP document symbols
-          pick_lsp.document_symbols = function()
-            local params = { textDocument = vim.lsp.util.make_text_document_params() }
-            vim.lsp.buf_request(0, 'textDocument/documentSymbol', params, function(_, result)
-              if not result or vim.tbl_isempty(result) then
-                vim.notify('No symbols found', vim.log.levels.INFO)
-                return
-              end
-
-              local items = {}
-              local function extract_symbols(symbols, level)
-                level = level or 0
-                for _, symbol in ipairs(symbols) do
-                  local kind = vim.lsp.protocol.SymbolKind[symbol.kind] or "Unknown"
-                  local indent = string.rep("  ", level)
-                  local name = indent .. kind .. ": " .. symbol.name
-                  table.insert(items, { name = name, symbol = symbol })
-                  if symbol.children then
-                    extract_symbols(symbol.children, level + 1)
-                  end
-                end
-              end
-
-              extract_symbols(result)
-
-              require('mini.pick').start({
-                source = {
-                  items = items,
-                  name_extractor = function(item)
-                    return item.name
-                  end,
-                  action = function(item)
-                    local range = item.symbol.range or item.symbol.location.range
-                    vim.api.nvim_win_set_cursor(0, { range.start.line + 1, range.start.character })
-                    -- Center the cursor
-                    vim.cmd('normal! zz')
-                  end,
-                },
-              })
-            end)
+          fzf_lsp.document_symbols = function()
+            fzf.lsp_document_symbols({
+              jump1 = false,
+              preview = {
+                layout = "vertical",
+                vertical = "up:60%",
+              },
+            })
           end
 
           -- LSP workspace symbols
-          pick_lsp.workspace_symbols = function()
-            vim.ui.input({ prompt = 'Query: ' }, function(query)
-              if not query or query == '' then return end
-
-              local params = { query = query }
-              vim.lsp.buf_request(0, 'workspace/symbol', params, function(_, result)
-                if not result or vim.tbl_isempty(result) then
-                  vim.notify('No symbols found', vim.log.levels.INFO)
-                  return
-                end
-
-                require('mini.pick').start({
-                  source = {
-                    items = result,
-                    name_extractor = function(item)
-                      local kind = vim.lsp.protocol.SymbolKind[item.kind] or "Unknown"
-                      local uri = item.location.uri
-                      local range = item.location.range
-                      local fname = vim.uri_to_fname(uri)
-                      local row = range.start.line + 1
-                      local col = range.start.character + 1
-                      return string.format('%s [%s] %s:%d:%d', item.name, kind, fname, row, col)
-                    end,
-                    preview = function(_, item)
-                      local uri = item.location.uri
-                      local range = item.location.range
-                      local fname = vim.uri_to_fname(uri)
-                      local row = range.start.line + 1
-                      return require('mini.pick.builtin').file_preview(fname, row)
-                    end,
-                    action = function(item)
-                      local uri = item.location.uri
-                      local range = item.location.range
-                      vim.cmd('edit ' .. vim.uri_to_fname(uri))
-                      vim.api.nvim_win_set_cursor(0,
-                        { range.start.line + 1, range.start.character })
-                    end,
-                  },
-                })
-              end)
-            end)
+          fzf_lsp.workspace_symbols = function()
+            fzf.lsp_workspace_symbols({
+              jump1 = false,
+              preview = {
+                layout = "vertical",
+                vertical = "up:60%",
+              },
+            })
           end
 
           -- Jump to the definition of the word under your cursor
-          map("gd", pick_lsp.definitions, "Goto Definition")
+          map("gd", fzf_lsp.definitions, "Goto Definition")
           -- Find references for the word under your cursor
-          map("gr", pick_lsp.references, "Goto References")
+          map("gr", fzf_lsp.references, "Goto References")
           -- Jump to the implementation of the word under your cursor
-          map("gI", pick_lsp.implementations, "Goto Implementation")
+          map("gI", fzf_lsp.implementations, "Goto Implementation")
           -- Jump to the type definition of the word under your cursor
-          map("<leader>D", pick_lsp.type_definitions, "Type Definition")
+          map("<leader>D", fzf_lsp.type_definitions, "Type Definition")
           -- Fuzzy find all the symbols in your current document
-          map("<leader>ds", pick_lsp.document_symbols, "Document Symbols")
+          map("<leader>ds", fzf_lsp.document_symbols, "Document Symbols")
           -- Fuzzy find all the symbols in your current workspace
-          map("<leader>ws", pick_lsp.workspace_symbols, "Workspace Symbols")
+          map("<leader>ws", fzf_lsp.workspace_symbols, "Workspace Symbols")
           -- Rename the variable under your cursor
           map("<leader>rn", vim.lsp.buf.rename, "Rename")
           -- Format the current buffer
