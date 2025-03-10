@@ -44,18 +44,6 @@ return {
         },
       })
 
-      -- mini.indentscope - Show scope based on indentation (disabled)
-      require("mini.indentscope").setup({
-        symbol = "",  -- Empty symbol effectively disables the visual indicator
-        options = {
-          try_as_border = false,
-          draw = {
-            delay = 1000000,  -- Very long delay effectively disables it
-            animation = function() return 0 end,
-          },
-        },
-      })
-
       -- mini.files - File explorer
       require("mini.files").setup({
         windows = {
@@ -135,8 +123,6 @@ return {
         search_method = 'cover',
       })
 
-      -- mini.pick is configured in lua/plugins/mini_pick.lua
-
       -- mini.splitjoin - Split and join arguments, arrays, etc.
       require("mini.splitjoin").setup({
         mappings = {
@@ -186,15 +172,6 @@ return {
           merge = nil,
         },
         silent = false,
-      })
-
-      -- mini.animate - Animate common Neovim actions (disabled)
-      require("mini.animate").setup({
-        cursor = { enable = false },
-        resize = { enable = false },
-        open = { enable = false },
-        close = { enable = false },
-        scroll = { enable = false },
       })
     end,
   },

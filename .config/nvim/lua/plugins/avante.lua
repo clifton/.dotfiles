@@ -1,3 +1,4 @@
+---@diagnostic disable: missing-fields
 return {
   -- Avante.nvim - AI assistant powered by Claude
   {
@@ -14,7 +15,6 @@ return {
         debug = false,
         custom_tools = {},
         auto_suggestions_provider = "claude",
-
 
         -- Claude API configuration
         claude = {

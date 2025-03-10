@@ -296,7 +296,7 @@ return {
           -- Execute a code action, usually your cursor needs to be on top of an error
           map("<leader>ca", vim.lsp.buf.code_action, "Code Action")
           -- Show the signature of the function you're currently completing
-          map("<C-k>", vim.lsp.buf.signature_help, "Signature Help")
+          map("<C-s>", vim.lsp.buf.signature_help, "Signature Help")
           -- Go to the declaration of the word under your cursor
           map("gD", vim.lsp.buf.declaration, "Goto Declaration")
           -- Show documentation under cursor

@@ -1,104 +1,105 @@
--- This file is disabled since mini.pick functionality is now integrated into mini.lua
+-- fzf-lua - Fast fuzzy finder
 return {
-  -- mini.pick - Fuzzy picker with beautiful UI
   {
-    "echasnovski/mini.nvim",
-    dependencies = {},
+    "ibhagwan/fzf-lua",
+    dependencies = { "echasnovski/mini.icons" },
     config = function()
-      -- Configure mini.pick
-      require("mini.pick").setup({
-        options = {
-          use_border = true,
-          content_from_bottom = true,
-          show_preview = true,
-        },
-        mappings = {
-          preview_scroll_up = {
-            char = '<C-b>',
-            func = function(buf_id, state)
-              local preview_winid = state.preview_winid
-              if preview_winid ~= nil then
-                local height = vim.api.nvim_win_get_height(preview_winid)
-                local input = string.rep("<C-u>", math.max(1, math.floor(height / 4)))
-                vim.api.nvim_win_call(preview_winid, function() vim.cmd("normal! " .. input) end)
-              end
-            end
-          },
-          preview_scroll_down = {
-            char = '<C-f>',
-            func = function(buf_id, state)
-              local preview_winid = state.preview_winid
-              if preview_winid ~= nil then
-                local height = vim.api.nvim_win_get_height(preview_winid)
-                local input = string.rep("<C-d>", math.max(1, math.floor(height / 4)))
-                vim.api.nvim_win_call(preview_winid, function() vim.cmd("normal! " .. input) end)
-              end
-            end
-          },
-        },
-        window = {
-          config = function()
-            local screen_width = vim.o.columns
-            local screen_height = vim.o.lines
-            local width = math.min(120, math.floor(screen_width * 0.8))
-            local height = math.min(30, math.floor(screen_height * 0.7))
-            local row = math.floor(screen_height * 0.5)
-            local col = math.floor((screen_width - width) / 2)
-            return {
-              width = width,
-              height = height,
-              row = row,
-              col = col,
-            }
-          end,
-          border = { style = 'rounded' },
+      local fzf = require("fzf-lua")
+
+      -- Configure fzf-lua
+      fzf.setup({
+        winopts = {
+          -- Window layout
+          height = 0.85,
+          width = 0.80,
+          row = 0.5, -- Center vertically
+          col = 0.50,
+          border = "rounded",
+          backdrop = 60,
           preview = {
-            height = function(picker_height)
-              return math.floor(picker_height * 0.4)
-            end,
+            border = "border",
+            wrap = "nowrap",
+            hidden = "nohidden",
+            vertical = "up:60%", -- Preview above the results
+            horizontal = "right:60%",
+            layout = "vertical", -- Force vertical layout with preview on top
+            flip_columns = 120,
+            title = true,
+            scrollbar = "float",
+            winopts = {
+              number = true,
+              relativenumber = false,
+              cursorline = true,
+              cursorlineopt = "both",
+              cursorcolumn = false,
+              signcolumn = "no",
+              list = false,
+              foldenable = false,
+              foldmethod = "manual",
+            },
+          },
+          on_create = function()
+            vim.keymap.set("t", "<C-j>", "<Down>", { buffer = true })
+            vim.keymap.set("t", "<C-k>", "<Up>", { buffer = true })
+          end,
+        },
+        keymap = {
+          -- Mappings inside the fzf window
+          builtin = {
+            ["<C-d>"] = "preview-page-down",
+            ["<C-u>"] = "preview-page-up",
+            ["<C-f>"] = "preview-page-down",
+            ["<C-b>"] = "preview-page-up",
           },
         },
-        source = { show_hidden = true },
-        file = {
-          show_hidden = true,
-          git_ignore = true,
-          exclude_patterns = {
-            '%.git/',
-            'node_modules/',
-            'target/',
-            'build/',
-            'dist/',
-          },
+        fzf_opts = {
+          -- Options passed to fzf
+          ["--layout"] = "reverse-list", -- Input at the bottom, results flow bottom-to-top
+          ["--info"] = "inline",
+          ["--height"] = "100%",
+          ["--reverse"] = true, -- Ensure reverse mode is enabled (bottom-to-top)
+          ["--border"] = "none", -- No border within fzf itself (we use nvim's border)
+          ["--prompt"] = "> ", -- Simple prompt
+          ["--pointer"] = "➜", -- Pointer to the current line
+          ["--marker"] = "✓", -- Multi-select marker
+        },
+        files = {
+          -- File finder options
+          prompt = "Files❯ ",
+          cmd = nil, -- Use default command based on git/fd/find
+          git_icons = true,
+          file_icons = true,
+          color_icons = true,
+          find_opts =
+          [[-type f -not -path "*/\.git/*" -not -path "*/node_modules/*" -not -path "*/target/*" -not -path "*/build/*" -not -path "*/dist/*"]],
+          fd_opts = "--color=never --type f --hidden --follow --exclude .git",
+          git_ignore = true, -- Respect .gitignore
+          hidden = true,     -- Show hidden files
+        },
+        grep = {
+          -- Grep options
+          prompt = "Grep❯ ",
+          input_prompt = "Grep For❯ ",
+          git_icons = true,
+          file_icons = true,
+          color_icons = true,
+          grep_opts = "--binary-files=without-match --line-number --recursive --color=always --extended-regexp",
+          rg_opts = "--column --line-number --no-heading --color=always --smart-case --max-columns=512 --glob=!.git/ --glob=!node_modules/ --glob=!target/ --glob=!build/ --glob=!dist/",
+          no_header = false,
+          no_header_i = false,
+          hidden = true, -- Search hidden files
+          follow = true, -- Follow symlinks
         },
       })
 
       -- Create PickFiles command
       vim.api.nvim_create_user_command('PickFiles', function()
-        require('mini.pick').builtin.files({
-          show_hidden = true,
-          window = {
-            config = function()
-              local screen_width = vim.o.columns
-              local screen_height = vim.o.lines
-              local width = math.min(120, math.floor(screen_width * 0.8))
-              local height = math.min(30, math.floor(screen_height * 0.7))
-              local row = math.floor(screen_height * 0.5)
-              local col = math.floor((screen_width - width) / 2)
-              return {
-                width = width,
-                height = height,
-                row = row,
-                col = col,
-              }
-            end,
-            preview = {
-              height = function(picker_height)
-                return math.floor(picker_height * 0.4)
-              end,
-            },
-          },
+        fzf.files({
+          cwd = vim.fn.getcwd(),
+          hidden = true,
+          git_ignore = true,
         })
-      end, { desc = 'Open mini.pick file finder' })
+      end, { desc = 'Open fzf-lua file finder' })
 
       -- Setup +PickFiles handler
       vim.api.nvim_create_autocmd("VimEnter", {
@@ -113,29 +114,10 @@ return {
 
           if has_pick_files and #vim.fn.expand('%') == 0 then
             vim.fn.timer_start(100, function()
-              require('mini.pick').builtin.files({
-                show_hidden = true,
-                window = {
-                  config = function()
-                    local screen_width = vim.o.columns
-                    local screen_height = vim.o.lines
-                    local width = math.min(120, math.floor(screen_width * 0.8))
-                    local height = math.min(30, math.floor(screen_height * 0.7))
-                    local row = math.floor(screen_height * 0.5)
-                    local col = math.floor((screen_width - width) / 2)
-                    return {
-                      width = width,
-                      height = height,
-                      row = row,
-                      col = col,
-                    }
-                  end,
-                  preview = {
-                    height = function(picker_height)
-                      return math.floor(picker_height * 0.4)
-                    end,
-                  },
-                },
+              fzf.files({
+                cwd = vim.fn.getcwd(),
+                hidden = true,
+                git_ignore = true,
               })
             end)
           end
@@ -143,99 +125,108 @@ return {
         once = true,
       })
 
-      -- Register keymaps for mini.pick
-      local function register_pick_keymaps()
+      -- Register keymaps for fzf-lua
+      local function register_fzf_keymaps()
         local map = function(mode, lhs, rhs, desc)
           vim.keymap.set(mode, lhs, rhs, { desc = desc })
         end
 
-        -- Common window configuration for all pick commands
-        local window_config = {
-          config = function()
-            local screen_width = vim.o.columns
-            local screen_height = vim.o.lines
-            local width = math.min(120, math.floor(screen_width * 0.8))
-            local height = math.min(30, math.floor(screen_height * 0.7))
-            local row = math.floor(screen_height * 0.5)
-            local col = math.floor((screen_width - width) / 2)
-            return {
-              width = width,
-              height = height,
-              row = row,
-              col = col,
-            }
-          end,
-          preview = {
-            height = function(picker_height)
-              return math.floor(picker_height * 0.4)
-            end,
-          },
-        }
-
         -- File finding
         map("n", "<C-p>", function()
-          require('mini.pick').builtin.files({ show_hidden = true, window = window_config })
+          fzf.files({
+            cwd = vim.fn.getcwd(),
+            hidden = true,
+            git_ignore = true,
+          })
         end, "Find files (cwd)")
 
         map("n", "<leader>f", function()
-          require('mini.pick').builtin.files({ show_hidden = true, window = window_config })
+          fzf.files({
+            cwd = vim.fn.getcwd(),
+            hidden = true,
+            git_ignore = true,
+          })
         end, "Find files")
 
         map("n", "<leader>.", function()
-          require('mini.pick').builtin.files({
-            show_hidden = true,
-            filter = function(path) return vim.fn.filereadable(path) == 1 and vim.fn.getftime(path) > 0 end,
-            window = window_config,
+          fzf.oldfiles({
+            cwd = vim.fn.getcwd(),
+            include_current_session = true,
           })
         end, "Recent files")
 
         map("n", "<leader>fa", function()
-          require('mini.pick').builtin.files({ show_hidden = true, git_ignore = false, window = window_config })
-        end, "Find all files (including hidden)")
+          fzf.files({
+            cwd = vim.fn.getcwd(),
+            hidden = true,
+            git_ignore = false, -- Don't respect gitignore
+            fd_opts = "--color=never --type f --hidden --no-ignore --follow --exclude .git",
+          })
+        end, "Find all files (including hidden and ignored)")
 
         -- Buffer and directory navigation
         map("n", "<leader>gb", function()
-          require('mini.pick').builtin.buffers({ window = window_config })
+          fzf.buffers()
         end, "Buffers")
 
         map("n", "<leader>gf", function()
           local current_file = vim.fn.expand('%:p:h')
-          require('mini.pick').builtin.files({ show_hidden = true, cwd = current_file, window = window_config })
+          fzf.files({
+            cwd = current_file,
+            hidden = true,
+            git_ignore = true,
+          })
         end, "Find files (file dir)")
 
         -- Search
         map("n", "<leader>rg", function()
-          require('mini.pick').builtin.grep_live({ show_hidden = true, window = window_config })
+          fzf.live_grep({
+            cwd = vim.fn.getcwd(),
+            hidden = true,
+            glob_flag = "--glob=!.git/", -- Explicitly exclude .git directory
+            rg_opts = "--column --line-number --no-heading --color=always --smart-case --max-columns=512 --glob=!.git/ --glob=!node_modules/ --glob=!target/ --glob=!build/ --glob=!dist/",
+          })
         end, "Live grep")
 
         map("n", "<leader>/", function()
-          require('mini.pick').builtin.grep({
-            show_hidden = true,
-            pattern = vim.fn.input("Grep pattern: "),
-            window = window_config,
+          fzf.grep({
+            cwd = vim.fn.getcwd(),
+            search = "",
+            hidden = true,
+            glob_flag = "--glob=!.git/", -- Explicitly exclude .git directory
+            rg_opts = "--column --line-number --no-heading --color=always --smart-case --max-columns=512 --glob=!.git/ --glob=!node_modules/ --glob=!target/ --glob=!build/ --glob=!dist/",
           })
         end, "Grep")
 
         -- Help and commands
         map("n", "<leader>h", function()
-          require('mini.pick').builtin.help({ window = window_config })
+          fzf.help_tags()
         end, "Help pages")
 
         map("n", "<leader>:", function()
-          require('mini.pick').builtin.commands({ window = window_config })
+          fzf.commands()
         end, "Commands")
 
         map("n", "<leader>k", function()
-          require('mini.pick').builtin.keymaps({ window = window_config })
+          fzf.keymaps()
         end, "Keymaps")
 
         map("n", "<leader>z", function()
-          require('mini.pick').builtin.resume({ window = window_config })
+          fzf.resume()
         end, "Resume last picker")
+
+        -- Additional fzf-lua specific commands
+        map("n", "<leader>gc", function()
+          fzf.git_commits()
+        end, "Git commits")
+
+        map("n", "<leader>gs", function()
+          fzf.git_status()
+        end, "Git status")
       end
 
       -- Register keymaps
-      register_pick_keymaps()
+      register_fzf_keymaps()
     end,
   },
 }
