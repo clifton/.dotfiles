@@ -66,6 +66,10 @@ path = "~/.dotfiles"
 # startup_command = "nvim +PickFiles"
 startup_command = "tree"
 
+[[session]]
+name = "btop"
+startup_command = "btop"
+
 # mosh
 
 [[session]]
@@ -142,6 +146,10 @@ name = "yabai config"
 path = "~/.dotfiles"
 startup_command = "nvim -O .yabairc .skhdrc"
 
+[[session]]
+name = "notes"
+path = ""
+
 
 # plugins
 
@@ -173,4 +181,3 @@ startup_command = "nvim -O .yabairc .skhdrc"
 # name = "perplexica"
 # path = "~/c/perplexica"
 # startup_command = "docker compose up -d"
-

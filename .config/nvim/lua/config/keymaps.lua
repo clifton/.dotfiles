@@ -54,6 +54,10 @@ map("n", "<leader>rm", function()
   vim.fn.delete(file)
 end)
 
+map("n", "<leader>ff", function()
+  MiniFiles.open(nil, false)
+end)
+
 -- Command aliases
 vim.cmd([[
   command! -bang -range=% -complete=file -nargs=* W <line1>,<line2>write<bang> <args>
@@ -129,4 +133,3 @@ map("n", "<leader>p", function()
 end)
 
 map("v", "<leader>y", ":'<,'>CopyToClipboard<CR>")
-
