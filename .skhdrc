@@ -112,15 +112,15 @@
 
 # toggle sticky(+float), topmost, picture-in-picture
 # alt - p : yabai -m window --toggle sticky --toggle topmost --toggle pip
-# App shortcuts 
-# shift + alt - c : open -a 'Cursor'
-# shift + alt - s : open -a 'Slack'
-# shift + alt - b : open -a 'Brave Browser'
-# shift + alt - m : open -a 'Spotify'
-# shift + alt - n : open -a 'Notion'
-# shift + alt - o : open -a 'Obsidian'
-# shift + alt - d : open -a 'Discord'
-# shift + alt - g : open -a 'Granola'
-# shift + alt - q : open -a 'Messages'
+# App shortcuts
+shift + alt - c : open -a 'Cursor'
+shift + alt - s : open -a 'Slack'
+shift + alt - b : open -a 'Brave Browser'
+shift + alt - m : open -a 'Spotify'
+shift + alt - n : open -a 'Notion'
+shift + alt - o : open -a 'Obsidian'
+shift + alt - d : open -a 'Discord'
+shift + alt - g : open -a 'Granola'
+shift + alt - q : open -a 'Messages'
 
 # alt - a : open -a 'ChatGPT'

@@ -31,6 +31,7 @@ function sc {
 }
 
 alias gst="git status --short"
+alias gl="git pull"
 alias gd="git diff --no-prefix"
 alias gco="git checkout"
 alias gcb="git checkout -b"

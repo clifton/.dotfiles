@@ -75,6 +75,58 @@ zinit light Aloxaf/fzf-tab  # load after compinit
 
 zinit cdreplay -q
 
+# Oh My Posh setup for both macOS and Linux
+setup_oh_my_posh() {
+  # Check if Oh My Posh is installed
+  if ! command -v oh-my-posh &> /dev/null; then
+    echo "Oh My Posh not found. Installing..."
+
+    # Install Oh My Posh based on platform
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+      # macOS installation
+      brew install jandedobbeleer/oh-my-posh/oh-my-posh
+    elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+      # Linux installation
+      if command -v brew &> /dev/null; then
+        # Use Homebrew if available
+        brew install jandedobbeleer/oh-my-posh/oh-my-posh
+      else
+        # Use the official installer script
+        curl -s https://ohmyposh.dev/install.sh | bash -s
+      fi
+    fi
+
+    echo "Oh My Posh installed successfully!"
+  fi
+
+  # Set up Oh My Posh theme
+  # Use a default theme from the themes directory
+  local theme_path="$(brew --prefix oh-my-posh 2>/dev/null)/themes/jandedobbeleer.omp.json"
+
+  # If brew path doesn't exist, try the standard path
+  if [[ ! -f "$theme_path" ]]; then
+    if [[ -d "$HOME/.poshthemes" ]]; then
+      theme_path="$HOME/.poshthemes/jandedobbeleer.omp.json"
+    elif [[ -d "/usr/local/share/oh-my-posh/themes" ]]; then
+      theme_path="/usr/local/share/oh-my-posh/themes/jandedobbeleer.omp.json"
+    fi
+  fi
+
+  # Initialize Oh My Posh if theme exists
+  if [[ -f "$theme_path" ]]; then
+    eval "$(oh-my-posh init zsh --config $theme_path)"
+    echo "Oh My Posh initialized with theme: $theme_path"
+  else
+    # If no theme file found, initialize with default
+    eval "$(oh-my-posh init zsh)"
+    echo "Oh My Posh initialized with default theme"
+  fi
+}
+
+# Comment out powerlevel10k if you want to use Oh My Posh instead
+# Uncomment the line below to set up Oh My Posh
+# setup_oh_my_posh
+
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 

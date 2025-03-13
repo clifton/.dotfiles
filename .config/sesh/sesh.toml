@@ -74,23 +74,43 @@ startup_command = "btop"
 
 [[session]]
 name = "fat"
+path = "~"
 startup_command = "ssh fat"
 
 [[session]]
 name = "deuce"
+path = "~"
 startup_command = "ssh deuce"
 
 [[session]]
 name = "pop"
+path = "~"
 startup_command = "ssh pop"
 
 [[session]]
 name = "wsl2"
+path = "~"
 startup_command = "ssh wsl2"
 
 [[session]]
 name = "gateway"
+path = "~"
 startup_command = "ssh gateway"
+
+[[session]]
+name = "cabrito"
+path = "~"
+startup_command = "ssh cabrito"
+
+[[session]]
+name = "petita"
+path = "~"
+startup_command = "ssh petita"
+
+[[session]]
+name = "homeassistant"
+path = "~"
+startup_command = "ssh homeassistant"
 
 # mana
 
