@@ -217,15 +217,10 @@ return {
       -- Snippet Engine & its associated nvim-cmp source
       {
         "L3MON4D3/LuaSnip",
-        build = (function()
-          -- Build Step is needed for regex support in snippets
-          -- This step is not supported in many Windows environments
-          -- Remove the below condition to re-enable on Windows
-          if vim.fn.has("win32") == 1 or vim.fn.executable("make") == 0 then
-            return
-          end
-          return "make install_jsregexp"
-        end)(),
+        -- Removed the build step that was causing issues with jsregexp
+        -- Note: Without jsregexp, some regex-based snippets may not work
+        -- If you need regex support, manually install jsregexp:
+        -- cd ~/.local/share/nvim/lazy/LuaSnip && make install_jsregexp
       },
       "saadparwaiz1/cmp_luasnip",
 
