@@ -47,20 +47,30 @@ zinit light MenkeTechnologies/zsh-cargo-completion
 
 # Add in snippets
 zinit snippet OMZL::async_prompt.zsh
-zinit snippet OMZL::git.zsh
-zinit snippet OMZP::git
-zinit snippet OMZP::sudo
-zinit snippet OMZP::kubectl
-zinit snippet OMZP::command-not-found
-zinit snippet OMZP::docker-compose
-zinit snippet OMZP::python
-zinit snippet OMZP::ssh
-zinit ice as"completion"
-zinit snippet https://github.com/docker/cli/blob/master/contrib/completion/zsh/_docker
+# zinit snippet OMZL::git.zsh
+# zinit snippet OMZP::git
+# zinit snippet OMZP::sudo
+# zinit snippet OMZP::kubectl
+# zinit snippet OMZP::command-not-found
+# zinit snippet OMZP::docker-compose
+# zinit snippet OMZP::python
+# zinit snippet OMZP::ssh
+# zinit ice as"completion"
+# zinit snippet https://github.com/docker/cli/blob/master/contrib/completion/zsh/_docker
 
 
 # Load completions
 autoload -Uz compinit && compinit
+
+# Add Carapace as a Zinit plugin (add this before other completions)
+zinit ice from"gh-r" as"program" mv"carapace* -> carapace"
+zinit light carapace-sh/carapace-bin
+
+# Initialize Carapace (add after the plugin installation, before compinit)
+zinit ice as"completion" id-as"carapace-shims" \
+    atload"source <(carapace _carapace zsh)"
+zinit light zdharma-continuum/null
+
 zinit light Aloxaf/fzf-tab  # load after compinit
 
 zinit cdreplay -q
