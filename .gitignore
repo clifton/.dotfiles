@@ -3,3 +3,4 @@
 .ssh/id_*
 *.swp
 *-dotfiles/
+lazy-lock.json
