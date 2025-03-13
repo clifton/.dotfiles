@@ -34,6 +34,7 @@ alias gst="git status --short"
 alias gd="git diff --no-prefix"
 alias gco="git checkout"
 alias gcb="git checkout -b"
+alias gp="git push"
 alias br="git branch --show-current"
 
 alias vim="nvim"
