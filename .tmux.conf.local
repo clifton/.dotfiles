@@ -461,6 +461,8 @@ set -g @plugin 'git@github.com:joshmedeski/tmux-fzf-url'
 set -g @plugin 'fcsonline/tmux-thumbs'
 set -g @plugin 'omerxx/tmux-floax'
 set -g @plugin 'Nybkox/tmux-kanagawa'
+set -g @plugin 'christoomey/vim-tmux-navigator'
+set -g @vim_navigator_prefix_mapping_clear_screen ""
 # set -g @kanagawa-ignore-window-colors true
 set -g @kanagawa-plugins "battery cpu-usage ssh-session"
 set -g @kanagawa-cpu-usage-label ""

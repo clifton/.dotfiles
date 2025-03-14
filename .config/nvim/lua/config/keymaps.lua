@@ -30,10 +30,11 @@ end)
 -- Window navigation
 map("n", "<leader>w", "<C-w>v")
 map("n", "<leader>W", "<C-w>s")
-map("n", "<C-h>", "<C-w>h")
-map("n", "<C-j>", "<C-w>j")
-map("n", "<C-k>", "<C-w>k")
-map("n", "<C-l>", "<C-w>l")
+-- keys now bound by vim-tmux-navigator
+-- map("n", "<C-h>", "<C-w>h")
+-- map("n", "<C-j>", "<C-w>j")
+-- map("n", "<C-k>", "<C-w>k")
+-- map("n", "<C-l>", "<C-w>l")
 
 -- File operations
 map("c", "%%", function() return vim.fn.expand('%:h') .. '/' end, { expr = true })
