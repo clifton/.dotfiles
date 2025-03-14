@@ -16,14 +16,20 @@ return {
         custom_tools = {},
         auto_suggestions_provider = "claude",
 
-        -- Claude API configuration
-        claude = {
-          -- You'll need to set your API key in an environment variable
-          -- or directly here (not recommended for security reasons)
-          api_key = vim.env.ANTHROPIC_API_KEY,
+        -- Disable specific tools
+        disabled_tools = { "git_commit" },
 
-          -- Default model to use
-          model = "claude-3-5-sonnet-latest",
+        -- Claude API configuration
+        providers = {
+          claude = {
+            -- API configuration for Claude
+            endpoint = "https://api.anthropic.com",
+            model = "claude-3-5-sonnet-20241022",
+            timeout = 30000, -- Timeout in milliseconds
+            temperature = 0,
+            max_tokens = 4096,
+            -- API key is set via environment variable ANTHROPIC_API_KEY
+          },
         },
 
         -- UI configuration

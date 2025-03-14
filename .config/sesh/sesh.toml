@@ -166,11 +166,6 @@ name = "yabai config"
 path = "~/.dotfiles"
 startup_command = "nvim -O .yabairc .skhdrc"
 
-[[session]]
-name = "notes"
-path = ""
-
-
 # plugins
 
 # [[session]]
