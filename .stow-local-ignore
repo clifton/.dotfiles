@@ -6,6 +6,8 @@ _darcs
 \.gitignore
 \.gitmodules
 
+\.vscode
+
 .+~          # emacs backup files
 \#.*\#       # emacs autosave files
 \.old
