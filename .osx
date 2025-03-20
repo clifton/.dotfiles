@@ -1,0 +1,53 @@
+#!/bin/bash
+
+# Sort folders first in Finder
+defaults write com.apple.finder _FXSortFoldersFirst -bool true
+
+# Show the Size Column: There’s no direct defaults command to force the Size
+# column to appear in all Finder windows, as this is typically a per-window
+# setting in the GUI. However, you can set List View as the default view (which
+# supports the Size column) and rely on manual column addition or a script to
+# enforce it:
+defaults write com.apple.finder FXPreferredViewStyle -string "Nlsv"
+
+# Show all file extensions in Finder
+defaults write NSGlobalDomain AppleShowAllExtensions -bool true
+
+# Show the path bar in Finder
+defaults write com.apple.finder ShowPathbar -bool true
+
+# Show the status bar in Finder
+defaults write com.apple.finder ShowStatusBar -bool true
+
+# Set the default location for new Finder windows to the user's home directory
+defaults write com.apple.finder NewWindowTarget -string "PfHm"
+
+# Disable the warning when emptying the Trash
+defaults write com.apple.finder WarnOnEmptyTrash -bool false
+
+# Show the ~/Library folder
+chflags nohidden ~/Library
+
+# Show the /Volumes folder
+sudo chflags nohidden /Volumes
+
+# Dark mode
+defaults write NSGlobalDomain AppleInterfaceStyle -string "Dark"
+
+# Reduce motion
+defaults write com.apple.universalaccess reduceMotion -bool true
+
+# Autohide Dock
+defaults write com.apple.dock autohide -bool true
+
+# Set Dock size
+defaults write com.apple.dock tilesize -int 48
+
+# Set Dock magnification
+defaults write com.apple.dock magnification -bool false
+
+# Disable animation when resizing windows
+defaults write NSGlobalDomain NSWindowResizeTime -float 0.001
+defaults write com.apple.dock launchanim -bool false
+defaults write NSGlobalDomain NSAutomaticWindowAnimationsEnabled -bool false
+

@@ -38,6 +38,7 @@ alias gcb="git checkout -b"
 alias gp="git push"
 alias br="git branch --show-current"
 alias gc="git commit -v"
+alias gb="git branch"
 
 alias vim="nvim"
 

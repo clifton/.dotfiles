@@ -26,6 +26,8 @@ vim.opt.spelllang = "en_us"
 vim.opt.autoread = true
 vim.opt.lazyredraw = true
 vim.opt.termguicolors = true
+vim.opt.winwidth = 80   -- Minimum width of active window
+vim.opt.winminwidth = 5 -- Minimum width of inactive windows
 
 -- Search settings
 vim.opt.ignorecase = true

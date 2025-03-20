@@ -12,6 +12,8 @@ _darcs
 \#.*\#       # emacs autosave files
 \.old
 
+\.osx
+
 \.swp
 .and.swp
 \*.swp$
