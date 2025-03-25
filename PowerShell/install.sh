@@ -9,19 +9,17 @@ set -e
 # Determine Windows username using multiple methods
 echo "Detecting Windows username..."
 
-# Add Windows explorer.exe to PATH in WSL environment
-if [ -f /proc/version ] && grep -q "microsoft" /proc/version; then
-  # Get Windows system32 path and convert it to WSL path format
-  WINDOWS_DIR=$(wslpath -u "$(wslvar SYSTEMROOT)")
-  # Add only explorer.exe by using a function instead of PATH modification
-  function explorer() {
-    "${WINDOWS_DIR}/explorer.exe" "$@"
-  }
 
-  function cmd() {
+# Get Windows system32 path and convert it to WSL path format
+WINDOWS_DIR=$(wslpath -u "$(wslvar SYSTEMROOT)")
+# Add only explorer.exe by using a function instead of PATH modification
+function explorer() {
+    "${WINDOWS_DIR}/explorer.exe" "$@"
+}
+
+function cmd() {
     "${WINDOWS_DIR}/system32/cmd.exe" "$@"
-  }
-fi
+}
 
 
 # Method 1: cmd.exe method (most common)
@@ -434,13 +432,10 @@ echo "3. Double-click run_setup.bat"
 echo "-------------------------------------------------"
 
 # Try to open the Windows directory containing our files
-if which explorer &> /dev/null; then
-  echo "Attempting to open the folder in Windows Explorer..."
-  WIN_TEMP_DIR=$(wslpath -w "$TEMP_DIR" 2>/dev/null)
-  if [ ! -z "$WIN_TEMP_DIR" ]; then
-    explorer "$WIN_TEMP_DIR"
-    echo "Windows Explorer should open the folder location."
-  fi
+echo "Attempting to open the folder in Windows Explorer..."
+WIN_TEMP_DIR=$(wslpath -w "$TEMP_DIR" 2>/dev/null)
+if [ ! -z "$WIN_TEMP_DIR" ]; then
+    "${WINDOWS_DIR}/explorer.exe" "$WIN_TEMP_DIR"
 fi
 
 echo "Your PowerShell environment files have been copied and setup files created."
