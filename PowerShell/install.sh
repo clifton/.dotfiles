@@ -62,12 +62,14 @@ POWERSHELL_DIR="/mnt/c/Users/$WIN_USERNAME/Documents/PowerShell"
 POWERSHELL_CONFIG_DIR="/mnt/c/Users/$WIN_USERNAME/.config/PowerShell"
 TEMP_DIR="/mnt/c/Users/$WIN_USERNAME/AppData/Local/Temp/ps_setup_$(date +%s)"
 WIN_HOME_DIR="/mnt/c/Users/$WIN_USERNAME"
+WIN_NVIM_CONFIG_DIR="/mnt/c/Users/$WIN_USERNAME/AppData/Local/nvim"
 
 # Create directories if they don't exist
 echo "Creating PowerShell directories..."
 mkdir -p "$POWERSHELL_DIR"
 mkdir -p "$POWERSHELL_CONFIG_DIR"
 mkdir -p "$TEMP_DIR"
+mkdir -p "$WIN_NVIM_CONFIG_DIR"
 
 # Copy files to both locations (Documents is the default; .config is for newer PowerShell versions)
 echo "Copying files to Windows PowerShell directories..."
@@ -96,6 +98,16 @@ else
   echo "- .gitignore not found in WSL home directory, skipping"
 fi
 
+# Copy Neovim configuration files to Windows
+echo "Copying Neovim configuration files..."
+if [ -d "$HOME/.config/nvim" ]; then
+  # Copy all contents of the nvim directory
+  cp -r "$HOME/.config/nvim/"* "$WIN_NVIM_CONFIG_DIR/"
+  echo "- Neovim configuration copied to Windows ($WIN_NVIM_CONFIG_DIR)"
+else
+  echo "- Neovim configuration not found in WSL (~/.config/nvim), skipping"
+fi
+
 # Create an automated PowerShell setup script
 SETUP_SCRIPT="$TEMP_DIR/setup.ps1"
 
@@ -110,7 +122,7 @@ function Write-Status {
         [string]$Status,
         [string]$Color = "White"
     )
-    
+
     Write-Host $Message -NoNewline
     Write-Host " [$Status]" -ForegroundColor $Color
 }
@@ -174,12 +186,74 @@ if (-not (Get-Module -ListAvailable -Name PSFzf)) {
     Write-Status "PSFzf" "Already Installed" "Green"
 }
 
+# Install Git if not already installed
+if (-not (Get-Command -Name 'git' -ErrorAction SilentlyContinue)) {
+    Write-Host "Installing Git..." -ForegroundColor Cyan
+
+    $gitInstalled = $false
+
+    # Method 1: Try winget
+    if (Get-Command -Name 'winget' -ErrorAction SilentlyContinue) {
+        Write-Host "Trying winget method..." -NoNewline
+        try {
+            winget install Git.Git -h --accept-package-agreements --accept-source-agreements
+            Write-Host " [Success]" -ForegroundColor Green
+            $gitInstalled = $true
+
+            # Add Git to the current session PATH
+            $env:PATH = [System.Environment]::GetEnvironmentVariable("PATH", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("PATH", "User")
+        } catch {
+            Write-Host " [Failed]" -ForegroundColor Red
+        }
+    }
+
+    # Final status
+    if ($gitInstalled) {
+        Write-Host "Git installed successfully" -ForegroundColor Green
+    } else {
+        Write-Host "Failed to install Git. Please install manually from https://git-scm.com/download/win" -ForegroundColor Yellow
+    }
+} else {
+    Write-Status "Git" "Already Installed" "Green"
+}
+
+# Install Neovim if not already installed
+if (-not (Get-Command -Name 'nvim' -ErrorAction SilentlyContinue)) {
+    Write-Host "Installing Neovim..." -ForegroundColor Cyan
+
+    $nvimInstalled = $false
+
+    # Method 1: Try winget
+    if (Get-Command -Name 'winget' -ErrorAction SilentlyContinue) {
+        Write-Host "Trying winget method..." -NoNewline
+        try {
+            winget install Neovim.Neovim -h --accept-package-agreements --accept-source-agreements
+            Write-Host " [Success]" -ForegroundColor Green
+            $nvimInstalled = $true
+
+            # Add Neovim to the current session PATH
+            $env:PATH = [System.Environment]::GetEnvironmentVariable("PATH", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("PATH", "User")
+        } catch {
+            Write-Host " [Failed]" -ForegroundColor Red
+        }
+    }
+
+    # Final status
+    if ($nvimInstalled) {
+        Write-Host "Neovim installed successfully" -ForegroundColor Green
+    } else {
+        Write-Host "Failed to install Neovim. Please install manually from https://github.com/neovim/neovim/releases" -ForegroundColor Yellow
+    }
+} else {
+    Write-Status "Neovim" "Already Installed" "Green"
+}
+
 # Install Oh My Posh
 if (-not (Get-Command -Name 'oh-my-posh' -ErrorAction SilentlyContinue)) {
     Write-Host "Installing Oh My Posh..." -ForegroundColor Cyan
-    
+
     $ohmyposhInstalled = $false
-    
+
     # Method 1: Try winget
     if (Get-Command -Name 'winget' -ErrorAction SilentlyContinue) {
         Write-Host "Trying winget method..." -NoNewline
@@ -191,7 +265,7 @@ if (-not (Get-Command -Name 'oh-my-posh' -ErrorAction SilentlyContinue)) {
             Write-Host " [Failed]" -ForegroundColor Red
         }
     }
-    
+
     # Method 2: Try direct download if winget failed
     if (-not $ohmyposhInstalled) {
         Write-Host "Trying direct download method..." -NoNewline
@@ -203,7 +277,7 @@ if (-not (Get-Command -Name 'oh-my-posh' -ErrorAction SilentlyContinue)) {
             Write-Host " [Failed]" -ForegroundColor Red
         }
     }
-    
+
     # Final status
     if ($ohmyposhInstalled) {
         Write-Host "Oh My Posh installed successfully" -ForegroundColor Green
@@ -217,9 +291,9 @@ if (-not (Get-Command -Name 'oh-my-posh' -ErrorAction SilentlyContinue)) {
 # Install git-delta (improved git diff)
 if (-not (Get-Command -Name 'delta' -ErrorAction SilentlyContinue)) {
     Write-Host "Installing git-delta..." -ForegroundColor Cyan
-    
+
     $deltaInstalled = $false
-    
+
     # Method 1: Try winget
     if (Get-Command -Name 'winget' -ErrorAction SilentlyContinue) {
         Write-Host "Trying winget method..." -NoNewline
@@ -231,7 +305,7 @@ if (-not (Get-Command -Name 'delta' -ErrorAction SilentlyContinue)) {
             Write-Host " [Failed]" -ForegroundColor Red
         }
     }
-    
+
     # Method 2: Try direct download if winget failed
     if (-not $deltaInstalled) {
         Write-Host "Trying direct download method..." -NoNewline
@@ -239,51 +313,51 @@ if (-not (Get-Command -Name 'delta' -ErrorAction SilentlyContinue)) {
             # Create a temporary directory for the download
             $tempDir = Join-Path $env:TEMP "delta_install"
             New-Item -ItemType Directory -Path $tempDir -Force | Out-Null
-            
+
             # Determine latest version and download URL for Windows x64
             $releaseUrl = "https://api.github.com/repos/dandavison/delta/releases/latest"
             $release = Invoke-RestMethod -Uri $releaseUrl
             $asset = $release.assets | Where-Object { $_.name -like "*x86_64-pc-windows-msvc.zip" } | Select-Object -First 1
-            
+
             if ($asset) {
                 # Download the zip file
                 $zipPath = Join-Path $tempDir "delta.zip"
                 Invoke-WebRequest -Uri $asset.browser_download_url -OutFile $zipPath
-                
+
                 # Extract the zip file
                 Expand-Archive -Path $zipPath -DestinationPath $tempDir -Force
-                
+
                 # Move the executable to a directory in PATH
                 $targetDir = "$env:USERPROFILE\.local\bin"
                 if (-not (Test-Path $targetDir)) {
                     New-Item -ItemType Directory -Path $targetDir -Force | Out-Null
                 }
-                
+
                 # Find the delta.exe in the extracted directory
                 $deltaExe = Get-ChildItem -Path $tempDir -Filter "delta.exe" -Recurse | Select-Object -First 1
-                
+
                 if ($deltaExe) {
                     Copy-Item -Path $deltaExe.FullName -Destination $targetDir
-                    
+
                     # Add to PATH if not already there
                     if ($env:PATH -notlike "*$targetDir*") {
                         $env:PATH += ";$targetDir"
                         [System.Environment]::SetEnvironmentVariable('PATH', $env:PATH, [System.EnvironmentVariableTarget]::User)
                     }
-                    
+
                     # Configure git to use delta
                     git config --global core.pager "delta"
                     git config --global interactive.diffFilter "delta --color-only"
                     git config --global delta.navigate true
                     git config --global delta.light false
                     git config --global delta.line-numbers true
-                    
+
                     Write-Host " [Success]" -ForegroundColor Green
                     $deltaInstalled = $true
                 } else {
                     Write-Host " [Failed - delta.exe not found]" -ForegroundColor Red
                 }
-                
+
                 # Clean up
                 Remove-Item -Path $tempDir -Recurse -Force
             } else {
@@ -293,7 +367,7 @@ if (-not (Get-Command -Name 'delta' -ErrorAction SilentlyContinue)) {
             Write-Host " [Failed]" -ForegroundColor Red
         }
     }
-    
+
     # Final status
     if ($deltaInstalled) {
         Write-Host "git-delta installed successfully" -ForegroundColor Green
@@ -372,4 +446,4 @@ fi
 echo "Your PowerShell environment files have been copied and setup files created."
 echo "After running the batch file, your PowerShell environment will be configured."
 
-exit 0 
+exit 0
