@@ -21,3 +21,6 @@ _darcs
 ^/README.*
 ^/LICENSE.*
 ^/COPYING
+
+# Windows-specific files
+^/PowerShell

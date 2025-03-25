@@ -185,3 +185,24 @@ case ":$PATH:" in
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 # pnpm end
+
+# Add Windows explorer.exe to PATH in WSL environment
+if [ -f /proc/version ] && grep -q "microsoft" /proc/version; then
+  # Get Windows system32 path and convert it to WSL path format
+  WINDOWS_DIR=$(wslpath -u "$(wslvar SYSTEMROOT)")
+  # Add only explorer.exe by using a function instead of PATH modification
+  function explorer() {
+    "${WINDOWS_DIR}/explorer.exe" "$@"
+  }
+
+  function cmd() {
+    "${WINDOWS_DIR}/system32/cmd.exe" "$@"
+  }
+
+  # Set XDG_RUNTIME_DIR to a user-writable location
+  export XDG_RUNTIME_DIR="$HOME/.xdg_runtime"
+  if [ ! -d "$XDG_RUNTIME_DIR" ]; then
+      mkdir -p "$XDG_RUNTIME_DIR"
+      chmod 0700 "$XDG_RUNTIME_DIR"
+  fi
+fi
