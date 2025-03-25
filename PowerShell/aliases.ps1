@@ -42,7 +42,7 @@ function sc {
         Write-Host "No active sessions found."
         return
     }
-    
+
     $selected = $sessions | Out-GridView -Title "Pick a session" -OutputMode Single
     if ($selected) {
         Enter-PSSession -Name $selected
@@ -70,26 +70,98 @@ function Flush-DNS {
 }
 Set-Alias -Name flush -Value Flush-DNS
 
-# Redis cache function
-function Flush-RedisCache {
-    param (
-        [Parameter(Mandatory=$true)]
-        [string]$RedisUrl
-    )
-    
-    if (-not (Get-Command -Name 'redis-cli' -ErrorAction SilentlyContinue)) {
-        Write-Error "redis-cli not found. Please install Redis tools."
+# Simple SSH key management function that works with Windows OpenSSH
+function Add-SshKeys {
+    # Check if Windows OpenSSH client is being used by Git
+    $gitSshCommand = git config --global core.sshCommand
+    $windowsOpenSshPath = "C:\Windows\System32\OpenSSH\ssh.exe"
+
+    if (-not $gitSshCommand -or $gitSshCommand -ne $windowsOpenSshPath) {
+        Write-Host "Configuring Git to use Windows OpenSSH client..." -ForegroundColor Cyan
+        git config --global core.sshCommand $windowsOpenSshPath
+        Write-Host "Git SSH command set to: $windowsOpenSshPath" -ForegroundColor Green
+    }
+
+    # Verify SSH agent service is running
+    $sshAgentService = Get-Service -Name 'ssh-agent' -ErrorAction SilentlyContinue
+
+    if ($null -eq $sshAgentService) {
+        Write-Host "OpenSSH Authentication Agent service not found." -ForegroundColor Red
+        Write-Host "Install OpenSSH Client using: Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0" -ForegroundColor Yellow
         return
     }
-    
-    Write-Host "Flushing Redis cache keys..." -ForegroundColor Yellow
-    $keys = Invoke-Expression "redis-cli -u $RedisUrl KEYS 'cache:*'"
-    
-    if ($keys) {
-        Invoke-Expression "redis-cli -u $RedisUrl DEL $keys"
-        Write-Host "Cache keys deleted successfully" -ForegroundColor Green
-    } else {
-        Write-Host "No cache keys found" -ForegroundColor Cyan
+
+    if ($sshAgentService.Status -ne 'Running') {
+        Write-Host "SSH Agent service is not running." -ForegroundColor Yellow
+
+        # Try to start the service
+        try {
+            Start-Service -Name 'ssh-agent' -ErrorAction Stop
+            Write-Host "SSH Agent service started" -ForegroundColor Green
+        } catch {
+            Write-Host "Could not start SSH Agent service. Run these commands as Administrator:" -ForegroundColor Red
+            Write-Host "  Set-Service -Name ssh-agent -StartupType Manual" -ForegroundColor White
+            Write-Host "  Start-Service ssh-agent" -ForegroundColor White
+            return
+        }
     }
+
+    # Set the environment variable to the Windows pipe
+    $env:SSH_AUTH_SOCK = "\\.\pipe\openssh-ssh-agent"
+
+    # Check which keys are already loaded
+    Write-Host "Checking loaded SSH keys..." -ForegroundColor Cyan
+    $loadedKeys = & "C:\Windows\System32\OpenSSH\ssh-add.exe" -l 2>&1
+
+    if ($loadedKeys -like "*Could not open a connection*") {
+        Write-Host "Error connecting to SSH agent. Please run PowerShell as Administrator and try again." -ForegroundColor Red
+        return
+    }
+
+    # Get the keys to add
+    $keysToAdd = @(
+        "$env:USERPROFILE\.ssh\id_rsa",
+        "$env:USERPROFILE\.ssh\id_ed25519"
+    )
+
+    # For each key, check if it exists and is already loaded
+    foreach ($key in $keysToAdd) {
+        if (Test-Path $key) {
+            # Extract email from public key file if it exists
+            $publicKeyPath = "$key.pub"
+            $keyIdentifier = $null
+
+            if (Test-Path $publicKeyPath) {
+                $publicKeyContent = Get-Content $publicKeyPath -Raw
+                if ($publicKeyContent -match ' ([^\s]+@[^\s]+)') {
+                    $keyIdentifier = $Matches[1]
+                }
+            }
+
+            # Check if key is already loaded
+            $isLoaded = $false
+            if ($keyIdentifier -and $loadedKeys -like "*$keyIdentifier*") {
+                $isLoaded = $true
+            }
+
+            if ($isLoaded) {
+                Write-Host "Key already loaded: $key" -ForegroundColor Green
+            } else {
+                Write-Host "Adding SSH key: $key" -ForegroundColor Cyan
+                & "C:\Windows\System32\OpenSSH\ssh-add.exe" $key
+
+                if ($LASTEXITCODE -eq 0) {
+                    Write-Host "Key added successfully" -ForegroundColor Green
+                } else {
+                    Write-Host "Failed to add key. Error code: $LASTEXITCODE" -ForegroundColor Red
+                }
+            }
+        }
+    }
+
+    # List all loaded keys
+    Write-Host "`nCurrently loaded SSH keys:" -ForegroundColor Cyan
+    & "C:\Windows\System32\OpenSSH\ssh-add.exe" -l
 }
-Set-Alias -Name flush_redis_cache -Value Flush-RedisCache 
+Set-Alias -Name keys -Value Add-SshKeys
+

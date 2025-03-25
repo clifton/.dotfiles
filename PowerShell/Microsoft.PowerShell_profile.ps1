@@ -59,7 +59,7 @@ function Install-Fzf {
     $destination = "$env:USERPROFILE\.local\bin"
     $fzfZip = "$env:TEMP\fzf-$fzfVersion-windows_amd64.zip"
     $fzfUrl = "https://github.com/junegunn/fzf/releases/download/$fzfVersion/fzf-$fzfVersion-windows_amd64.zip"
-    
+
     # Create destination directory if it doesn't exist
     if (-not (Test-Path $destination)) {
         New-Item -ItemType Directory -Path $destination -Force | Out-Null
@@ -69,19 +69,19 @@ function Install-Fzf {
             [System.Environment]::SetEnvironmentVariable('PATH', $env:PATH, [System.EnvironmentVariableTarget]::User)
         }
     }
-    
+
     try {
         # Download fzf
         Write-Host "Downloading fzf $fzfVersion..." -ForegroundColor Cyan
         Invoke-WebRequest -Uri $fzfUrl -OutFile $fzfZip
-        
+
         # Extract fzf
         Write-Host "Extracting fzf..." -ForegroundColor Cyan
         Expand-Archive -Path $fzfZip -DestinationPath $destination -Force
-        
+
         # Clean up
         Remove-Item $fzfZip
-        
+
         Write-Host "fzf installed successfully to $destination" -ForegroundColor Green
         return $true
     } catch {
@@ -116,4 +116,51 @@ if ($fzfCommand) {
 } else {
     Write-Host "PSFzf module is not loaded because fzf binary is missing." -ForegroundColor Yellow
     Write-Host "To manually install fzf, visit: https://github.com/junegunn/fzf/releases" -ForegroundColor Yellow
-} 
+}
+
+# Configure Git to use Windows OpenSSH client
+$opensshPath = "C:\\Windows\\System32\\OpenSSH\\ssh.exe"
+if (Test-Path $opensshPath) {
+    # Configure Git to use Windows OpenSSH
+    $gitSshCommand = git config --global core.sshCommand
+    if (-not $gitSshCommand -or $gitSshCommand -ne $opensshPath) {
+        Write-Host "Configuring Git to use Windows OpenSSH client..." -ForegroundColor Cyan
+        git config --global core.sshCommand $opensshPath
+        Write-Host "Git SSH command set to: $opensshPath" -ForegroundColor Green
+    } else {
+        # Write-Host "Git already configured to use Windows OpenSSH" -ForegroundColor Green
+    }
+
+    # Check and configure SSH agent service
+    $sshAgentService = Get-Service -Name 'ssh-agent' -ErrorAction SilentlyContinue
+
+    if ($null -ne $sshAgentService) {
+        # Check if service is disabled and needs to be enabled
+        if ($sshAgentService.StartType -eq 'Disabled') {
+            Write-Host "SSH Agent service is disabled. To enable it, run as Administrator:" -ForegroundColor Yellow
+            Write-Host "  Set-Service -Name ssh-agent -StartupType Manual" -ForegroundColor White
+            Write-Host "  Start-Service ssh-agent" -ForegroundColor White
+        } else {
+            # Check if service is stopped and needs to be started
+            if ($sshAgentService.Status -ne 'Running') {
+                Write-Host "Starting SSH Agent service..." -ForegroundColor Cyan
+                try {
+                    Start-Service -Name 'ssh-agent' -ErrorAction Stop
+                    Write-Host "SSH Agent service started" -ForegroundColor Green
+                } catch {
+                    Write-Host "Could not start SSH Agent service: $_" -ForegroundColor Red
+                    Write-Host "Run PowerShell as Administrator to start the service" -ForegroundColor Yellow
+                }
+            } else {
+                # Write-Host "SSH Agent service is running" -ForegroundColor Green
+            }
+        }
+
+        # Set SSH_AUTH_SOCK environment variable to the Windows pipe path
+        $env:SSH_AUTH_SOCK = "\\.\pipe\openssh-ssh-agent"
+    } else {
+        Write-Host "OpenSSH Authentication Agent service not found" -ForegroundColor Yellow
+        Write-Host "Install OpenSSH Client using: Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0" -ForegroundColor Yellow
+    }
+}
+
