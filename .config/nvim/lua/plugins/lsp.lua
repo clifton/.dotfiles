@@ -129,8 +129,6 @@ return {
           map("<leader>ws", fzf_lsp.workspace_symbols, "Workspace Symbols")
           -- Rename the variable under your cursor
           map("<leader>rn", vim.lsp.buf.rename, "Rename")
-          -- Format the current buffer
-          map("<leader>cf", vim.lsp.buf.format, "Format")
           -- Execute a code action, usually your cursor needs to be on top of an error
           map("<leader>ca", vim.lsp.buf.code_action, "Code Action")
           -- Show the signature of the function you're currently completing

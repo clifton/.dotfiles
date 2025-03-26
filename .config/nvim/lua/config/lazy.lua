@@ -37,6 +37,10 @@ require("lazy").setup({
     -- check for updates every 2 days
     frequency = 2 * 86400,
   },
+  -- disable automatic reloading of config files
+  change_detection = {
+    enabled = false,
+  },
 })
 
 require("config.keymaps")

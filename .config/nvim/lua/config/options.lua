@@ -29,6 +29,9 @@ vim.opt.termguicolors = true
 vim.opt.winwidth = 80   -- Minimum width of active window
 vim.opt.winminwidth = 5 -- Minimum width of inactive windows
 
+-- Disable automatic config reloading
+vim.g.auto_reload_config = false
+
 -- Search settings
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
