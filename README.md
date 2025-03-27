@@ -2,6 +2,16 @@
 
 A comprehensive dotfiles repository for cross-platform development environments, with a focus on Windows-Linux (WSL) interoperability and modern terminal tools.
 
+## Screenshots
+
+Tmux / Neovim
+
+![tmux/neovim](https://github.com/user-attachments/assets/2b240cd9-425e-4ebe-93ce-71a988f26b1d)
+
+Sesh
+
+![image](https://github.com/user-attachments/assets/6c11c5e1-3a3c-4a48-bcb7-6f4396f1d37b)
+
 ## Features
 
 - **Cross-Platform Support**
