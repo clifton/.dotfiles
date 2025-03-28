@@ -272,7 +272,7 @@ tmux_conf_theme_right_separator_sub="|"
 tmux_conf_theme_status_left=" ❐ #S"
 #tmux_conf_theme_status_left=" ❐ #S | ↑#{?uptime_y, #{uptime_y}y,}#{?uptime_d, #{uptime_d}d,}#{?uptime_h, #{uptime_h}h,}#{?uptime_m, #{uptime_m}m,} | #{pretty_pane_current_path} "
 # tmux_conf_theme_status_right=" #{prefix}#{mouse}#{pairing}#{synchronized}#{?battery_status,#{battery_status},}#{?battery_bar, #{battery_bar},}#{?battery_percentage, #{battery_percentage},} , %R , %d %b | #{username}#{root} | #{hostname} "
-tmux_conf_theme_status_right=" #{prefix}#{mouse}#{pairing}#{synchronized}#{?battery_status,#{battery_status},}#{?battery_vbar, #{battery_vbar},}| #{username}#{root} #{hostname} |#{cpu_fg_color}#{cpu_icon}"
+tmux_conf_theme_status_right=" #{prefix}#{mouse}#{pairing}#{synchronized}| #{username}#{root} #{hostname} |#{cpu_fg_color}#{cpu_icon}"
 
 # status left style
 # tmux_conf_theme_status_left_fg="$tmux_conf_theme_colour_6,$tmux_conf_theme_colour_7,$tmux_conf_theme_colour_8"
@@ -464,7 +464,9 @@ set -g @plugin 'Nybkox/tmux-kanagawa'
 set -g @plugin 'christoomey/vim-tmux-navigator'
 set -g @vim_navigator_prefix_mapping_clear_screen ""
 # set -g @kanagawa-ignore-window-colors true
-set -g @kanagawa-plugins "battery cpu-usage ssh-session"
+set -g @kanagawa-plugins "cpu-usage ssh-session"
+# Only show battery indicator if a battery is present
+if-shell "upower -e | grep -q battery" "set -ga @kanagawa-plugins ' battery'"
 set -g @kanagawa-cpu-usage-label ""
 set -g @dracula-show-ssh-only-when-connected true
 set -g @fzf-url-fzf-options '-p 60%,30% --prompt="   " --border-label=" Open URL "'
