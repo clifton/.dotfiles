@@ -129,6 +129,11 @@ name = "cmt"
 path = "~/code/rust/cmt"
 
 [[session]]
+name = "rstructor"
+path = "~/code/rust/rstructor"
+startup_command = "tree"
+
+[[session]]
 name = "autobuy"
 path = "~/code/autobuy"
 
