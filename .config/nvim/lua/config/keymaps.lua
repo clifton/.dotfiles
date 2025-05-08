@@ -85,7 +85,7 @@ local function copy_to_system_clipboard(lines)
   if os == 'Windows' then
     vim.fn.system('echo ' .. vim.fn.shellescape(text) .. '| clip.exe')
   elseif os == 'WSL' then
-    vim.fn.system('echo ' .. vim.fn.shellescape(text) .. '| clip.exe')
+    vim.fn.system('echo ' .. vim.fn.shellescape(text) .. '| /mnt/c/Windows/System32/clip.exe')
   elseif os == 'macOS' then
     vim.fn.system('echo ' .. vim.fn.shellescape(text) .. '| pbcopy')
   else
@@ -105,7 +105,7 @@ local function paste_from_system_clipboard()
   if os == 'Windows' then
     return vim.fn.system('powershell.exe Get-Clipboard')
   elseif os == 'WSL' then
-    return vim.fn.system('powershell.exe Get-Clipboard')
+    return vim.fn.system('/mnt/c/Windows/System32/WindowsPowershell/v1.0/powershell.exe Get-Clipboard')
   elseif os == 'macOS' then
     return vim.fn.system('pbpaste')
   else
