@@ -45,6 +45,9 @@ zinit light zsh-users/zsh-autosuggestions
 zinit light birdhackor/zsh-eza-ls-plugin
 zinit light MenkeTechnologies/zsh-cargo-completion
 
+# Configure zsh-autosuggestions color (one shade lighter using xterm-256)
+export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=244"
+
 # Add in snippets
 zinit snippet OMZL::async_prompt.zsh
 # zinit snippet OMZL::git.zsh

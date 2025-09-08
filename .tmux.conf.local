@@ -463,12 +463,11 @@ set -g @plugin 'omerxx/tmux-floax'
 set -g @plugin 'Nybkox/tmux-kanagawa'
 set -g @plugin 'christoomey/vim-tmux-navigator'
 set -g @vim_navigator_prefix_mapping_clear_screen ""
-# set -g @kanagawa-ignore-window-colors true
 set -g @kanagawa-plugins "cpu-usage ssh-session"
 # Only show battery indicator if a battery is present
 if-shell "upower -e | grep -q battery" "set -ga @kanagawa-plugins ' battery'"
 set -g @kanagawa-cpu-usage-label ""
-set -g @dracula-show-ssh-only-when-connected true
+set -g @kanagawa-ignore-window-colors true
 set -g @fzf-url-fzf-options '-p 60%,30% --prompt="   " --border-label=" Open URL "'
 set -g @fzf-url-history-limit '2000'
 set -g @thumbs-command 'echo -n {} | pbcopy' # copy to clipboard
