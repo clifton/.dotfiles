@@ -179,6 +179,10 @@ if [ -f "$HOME/.cargo/env" ]; then
   source $HOME/.cargo/env
 fi
 
+if [ -f "/home/linuxbrew/.linuxbrew/opt/mysql-client/bin/mysql" ]; then
+  alias mysql="/home/linuxbrew/.linuxbrew/opt/mysql-client/bin/mysql"
+fi
+
 export PATH="$PATH:$HOME/.local/bin"
 
 # pnpm
