@@ -51,3 +51,92 @@ defaults write NSGlobalDomain NSWindowResizeTime -float 0.001
 defaults write com.apple.dock launchanim -bool false
 defaults write NSGlobalDomain NSAutomaticWindowAnimationsEnabled -bool false
 
+# Ensure Homebrew is installed
+if ! command -v brew &> /dev/null; then
+  echo -e "\033[0;33mHomebrew is not installed. Installing Homebrew...\033[0m"
+  echo ""
+
+  # Check if we're on macOS
+  if [[ "$OSTYPE" != "darwin"* ]]; then
+    echo -e "\033[0;31mError: This script is designed for macOS. Homebrew installation skipped.\033[0m"
+    exit 1
+  fi
+
+  # Install Homebrew
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+  # Set up Homebrew in the current shell session
+  if [[ -f "/opt/homebrew/bin/brew" ]]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+  elif [[ -f "/usr/local/bin/brew" ]]; then
+    eval "$(/usr/local/bin/brew shellenv)"
+  fi
+
+  # Verify installation
+  if ! command -v brew &> /dev/null; then
+    echo -e "\033[0;31mError: Homebrew installation failed. Please install manually: https://brew.sh\033[0m"
+    exit 1
+  fi
+
+  echo ""
+  echo -e "\033[0;32m✓ Homebrew installed successfully!\033[0m"
+  echo ""
+fi
+
+# Check for required Homebrew packages
+echo "Checking for required Homebrew packages..."
+
+# Ensure brew is in PATH for this script
+if [[ -f "/opt/homebrew/bin/brew" ]]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)" 2>/dev/null || true
+elif [[ -f "/usr/local/bin/brew" ]]; then
+  eval "$(/usr/local/bin/brew shellenv)" 2>/dev/null || true
+fi
+
+# Get list of installed packages
+INSTALLED_PACKAGES=$(brew list 2>/dev/null || echo "")
+
+# Required packages referenced in dotfiles
+REQUIRED_PACKAGES=(
+  "coreutils"      # for timeout command
+  "neovim"         # used in aliases, gitconfig, tmux config
+  "fzf"            # used in .zshrc and tmux config
+  "tmux"           # terminal multiplexer
+  "sesh"           # session management
+  "zoxide"         # smart directory navigation
+  "eza"            # modern ls replacement
+  "gum"            # used with sesh in aliases
+  "git-delta"      # git diff tool (brew package name)
+  "bat"            # cat replacement (used in sesh config)
+  "nvm"            # node version manager
+)
+
+MISSING_PACKAGES=()
+
+for package in "${REQUIRED_PACKAGES[@]}"; do
+  # Check if package is installed
+  if ! echo "$INSTALLED_PACKAGES" | grep -q "^${package}$"; then
+    MISSING_PACKAGES+=("$package")
+  fi
+done
+
+# Display warning if packages are missing
+if [ ${#MISSING_PACKAGES[@]} -gt 0 ]; then
+  echo ""
+  echo -e "\033[0;31m═══════════════════════════════════════════════════════════════\033[0m"
+  echo -e "\033[0;31m⚠️  WARNING: Missing required Homebrew packages!\033[0m"
+  echo -e "\033[0;31m═══════════════════════════════════════════════════════════════\033[0m"
+  echo -e "\033[0;31mThe following packages are referenced in your dotfiles but are not installed:\033[0m"
+  echo ""
+  for pkg in "${MISSING_PACKAGES[@]}"; do
+    echo -e "\033[0;31m  • $pkg\033[0m"
+  done
+  echo ""
+  echo -e "\033[0;31mInstall missing packages with:\033[0m"
+  echo -e "\033[0;31m  brew install ${MISSING_PACKAGES[*]}\033[0m"
+  echo -e "\033[0;31m═══════════════════════════════════════════════════════════════\033[0m"
+  echo ""
+  exit 1
+else
+  echo "✓ All required Homebrew packages are installed."
+fi
