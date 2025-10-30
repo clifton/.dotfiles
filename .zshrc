@@ -161,7 +161,7 @@ zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'ls --color $realpath'
 
 # Shell integrations
 eval "$(fzf --zsh)"
-eval "$(zoxide init --cmd cd zsh)"
+eval "$(zoxide init zsh)"
 
 export NVM_COMPLETION=true
 export NVM_SYMLINK_CURRENT="true"
@@ -181,6 +181,10 @@ fi
 
 if [ -f "/home/linuxbrew/.linuxbrew/opt/mysql-client/bin/mysql" ]; then
   alias mysql="/home/linuxbrew/.linuxbrew/opt/mysql-client/bin/mysql"
+fi
+
+if [ -f "$HOME/.foundry/bin" ]; then
+  export PATH="$PATH:$HOME/.foundry/bin"
 fi
 
 export PATH="$PATH:$HOME/.local/bin"

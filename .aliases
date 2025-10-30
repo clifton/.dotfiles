@@ -3,7 +3,6 @@
 alias ..="cd .."
 alias ...="cd ../.."
 
-
 # Check if eza is installed
 if command -v eza &> /dev/null; then
   alias tree="eza $eza_params --tree --group-directories-first --git --git-ignore --all"
@@ -39,6 +38,7 @@ alias gp="git push"
 alias br="git branch --show-current"
 alias gc="git commit -v"
 alias gb="git branch"
+alias gwt='git worktree list'
 
 alias vim="nvim"
 
