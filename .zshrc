@@ -217,3 +217,10 @@ if [ -f /proc/version ] && grep -q "microsoft" /proc/version; then
       chmod 0700 "$XDG_RUNTIME_DIR"
   fi
 fi
+
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  # Only run ssh-add if there are no identities loaded
+  if ! ssh-add -l &>/dev/null; then
+    ssh-add --apple-load-keychain -q
+  fi
+fi

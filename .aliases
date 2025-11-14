@@ -16,7 +16,9 @@ else
 fi
 
 # keychain for wsl2
-if command -v /usr/bin/keychain &> /dev/null; then
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  alias keys='ssh-add -k ~/.ssh/id_ed25519'
+elif command -v /usr/bin/keychain &> /dev/null; then
   alias keys='eval `keychain --eval --agents ssh id_rsa`'
 fi
 
