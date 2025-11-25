@@ -70,9 +70,10 @@ zinit ice from"gh-r" as"program" mv"carapace* -> carapace"
 zinit light carapace-sh/carapace-bin
 
 # Initialize Carapace (add after the plugin installation, before compinit)
-zinit ice as"completion" id-as"carapace-shims" \
-    atload"source <(carapace _carapace zsh)"
-zinit light zdharma-continuum/null
+# DISABLED: carapace causes double-escaping of spaces with fzf-tab
+# zinit ice as"completion" id-as"carapace-shims" \
+#     atload"source <(carapace _carapace zsh)"
+# zinit light zdharma-continuum/null
 
 zinit light Aloxaf/fzf-tab  # load after compinit
 
@@ -156,8 +157,43 @@ setopt hist_find_no_dups
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 zstyle ':completion:*' menu no
-zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
-zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'ls --color $realpath'
+zstyle ':completion:*' special-dirs true
+zstyle ':completion:*:descriptions' format '[%d]'
+
+# fzf-tab configuration
+zstyle ':fzf-tab:*' continuous-trigger 'space'
+# disable sort when completing `git checkout`
+zstyle ':completion:*:git-checkout:*' sort false
+# set descriptions format to enable group support
+zstyle ':completion:*:descriptions' format '[%d]'
+# set list-colors to enable filename colorizing
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+# force zsh not to show completion menu, which allows fzf-tab to capture the unambiguous prefix
+zstyle ':completion:*' menu no
+# switch group using `<` and `>`
+zstyle ':fzf-tab:*' switch-group '<' '>'
+
+# Fix for fzf-tab passing the directory as query
+zstyle ':fzf-tab:*' query-string prefix
+
+# Fix double-escaping issue with fzf-tab
+zstyle ':completion:*' special-dirs true
+zstyle ':completion:*' squeeze-slashes true
+
+# Disable popup mode - use full terminal
+zstyle ':fzf-tab:*' fzf-command fzf
+
+# fzf layout and preview configuration
+zstyle ':fzf-tab:*' fzf-flags --height=50% --layout=reverse --border --preview-window=right:50%:wrap --bind='ctrl-/:toggle-preview'
+
+# File/directory preview
+zstyle ':fzf-tab:complete:*:*' fzf-preview '
+  target=${realpath:-$word}
+  target=${target%% }
+  target=${~target}
+  [[ -d $target ]] && eza -1 --color=always -- "$target" 2>/dev/null
+  [[ -f $target ]] && bat --style=numbers --color=always --line-range=:100 -- "$target" 2>/dev/null
+'
 
 # Shell integrations
 eval "$(fzf --zsh)"

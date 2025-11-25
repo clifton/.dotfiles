@@ -76,3 +76,4 @@ keybind = cmd+l=text:\x01L
 keybind = cmd+o=text:\x01\x75
 # keybind = cmd+c=text:\x01[ # tmux thumbs
 
+keybind = shift+enter=text:\x1b\r
