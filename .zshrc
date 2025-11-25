@@ -224,3 +224,6 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     ssh-add --apple-load-keychain -q
   fi
 fi
+
+# Added by Antigravity
+export PATH="$HOME/.antigravity/antigravity/bin:$PATH"
