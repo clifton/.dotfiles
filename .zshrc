@@ -219,7 +219,8 @@ if [ -f "/home/linuxbrew/.linuxbrew/opt/mysql-client/bin/mysql" ]; then
   alias mysql="/home/linuxbrew/.linuxbrew/opt/mysql-client/bin/mysql"
 fi
 
-if [ -f "$HOME/.foundry/bin" ]; then
+# foundry
+if [ -d "$HOME/.foundry" ]; then
   export PATH="$PATH:$HOME/.foundry/bin"
 fi
 
