@@ -107,32 +107,57 @@ local function copy_to_system_clipboard(lines)
 end
 
 local function paste_from_system_clipboard()
-  local os = get_os()
+  local os_name = get_os()
 
-  if os == 'Windows' then
+  if os_name == 'Windows' then
     return vim.fn.system('powershell.exe Get-Clipboard')
-  elseif os == 'WSL' then
+  elseif os_name == 'WSL' then
     return vim.fn.system('/mnt/c/Windows/System32/WindowsPowershell/v1.0/powershell.exe Get-Clipboard')
-  elseif os == 'macOS' then
+  elseif os_name == 'macOS' then
     return vim.fn.system('pbpaste')
   else
-    if vim.fn.executable('xclip') == 1 then
+    -- Linux: try wl-paste (Wayland), xclip, xsel in order
+    if vim.fn.executable('wl-paste') == 1 then
+      return vim.fn.system('wl-paste --no-newline')
+    elseif vim.fn.executable('xclip') == 1 then
       return vim.fn.system('xclip -selection clipboard -o')
     elseif vim.fn.executable('xsel') == 1 then
       return vim.fn.system('xsel --clipboard --output')
     else
-      print("No clipboard tool found. Please install xclip or xsel.")
+      print("No clipboard tool found. Please install wl-paste, xclip, or xsel.")
       return ""
     end
   end
 end
 
 -- Clipboard mappings
+
+-- Paste from system clipboard (normal mode: paste after cursor)
 map("n", "<leader>p", function()
   local clipboard_content = paste_from_system_clipboard()
+  -- Remove trailing newline if present (pbpaste often adds one)
+  clipboard_content = clipboard_content:gsub("\n$", "")
+  -- Use 'c' for characterwise to avoid linewise paste behavior
+  vim.fn.setreg('"', clipboard_content, 'c')
+  vim.cmd('normal! p')
+end)
+
+-- Paste from system clipboard (insert mode: paste at cursor, stay in insert)
+map("i", "<leader>p", function()
+  local clipboard_content = paste_from_system_clipboard()
+  clipboard_content = clipboard_content:gsub("\n$", "")
+  -- Use nvim_put for clean insertion at cursor
   local lines = vim.split(clipboard_content, "\n")
-  local current_line = vim.fn.line('.')
-  vim.api.nvim_buf_set_lines(0, current_line, current_line, false, lines)
+  vim.api.nvim_put(lines, "c", false, true)
+end)
+
+-- Paste from system clipboard (visual mode: replace selection)
+map("v", "<leader>p", function()
+  local clipboard_content = paste_from_system_clipboard()
+  clipboard_content = clipboard_content:gsub("\n$", "")
+  -- Use 'c' for characterwise to avoid linewise paste behavior
+  vim.fn.setreg('"', clipboard_content, 'c')
+  vim.cmd('normal! p')
 end)
 
 map("v", "<leader>y", function()

@@ -551,6 +551,10 @@ bind -T copy-mode-vi 'C-\' select-pane -l
 # Cmd+C from ghostty: if in vim, send ,y to yank visual selection to clipboard
 bind-key -n F20 if-shell "$is_vim" 'send-keys ,y' ''
 
+# Cmd+V from ghostty: if in vim, send ,p to paste from system clipboard; otherwise paste via tmux
+# Cross-platform clipboard paste: tries pbpaste (macOS), wl-paste (Wayland), xclip, xsel
+bind-key -n F19 if-shell "$is_vim" 'send-keys ,p' 'run-shell "{ command -v pbpaste >/dev/null && pbpaste; } || { command -v wl-paste >/dev/null && wl-paste --no-newline; } || { command -v xclip >/dev/null && xclip -selection clipboard -o; } || { command -v xsel >/dev/null && xsel --clipboard --output; } | tmux load-buffer -" \; paste-buffer -dp'
+
 bind C-l send-keys 'C-l'
 
 bind e new-window -n 'tmux cfg' -e EDITOR="$EDITOR" \

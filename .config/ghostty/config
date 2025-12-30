@@ -80,3 +80,6 @@ keybind = shift+enter=text:\x1b\r
 
 # Cmd+C: send F20 to trigger vim yank if in visual mode
 keybind = cmd+c=text:\x1b[34~
+
+# Cmd+V: send F19 to trigger vim paste
+keybind = cmd+v=text:\x1b[33~
