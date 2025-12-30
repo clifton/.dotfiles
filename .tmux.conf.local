@@ -548,6 +548,9 @@ bind -T copy-mode-vi 'C-k' select-pane -U
 bind -T copy-mode-vi 'C-l' select-pane -R
 bind -T copy-mode-vi 'C-\' select-pane -l
 
+# Cmd+C from ghostty: if in vim, send ,y to yank visual selection to clipboard
+bind-key -n F20 if-shell "$is_vim" 'send-keys ,y' ''
+
 bind C-l send-keys 'C-l'
 
 bind e new-window -n 'tmux cfg' -e EDITOR="$EDITOR" \

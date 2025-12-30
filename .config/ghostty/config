@@ -77,3 +77,6 @@ keybind = cmd+o=text:\x01\x75
 # keybind = cmd+c=text:\x01[ # tmux thumbs
 
 keybind = shift+enter=text:\x1b\r
+
+# Cmd+C: send F20 to trigger vim yank if in visual mode
+keybind = cmd+c=text:\x1b[34~
