@@ -34,9 +34,11 @@ function sc {
 alias gst="git status --short"
 alias gl="git pull"
 alias gd="git diff --no-prefix"
+alias gds="git diff --no-prefix --staged"
 alias gco="git checkout"
 alias gcb="git checkout -b"
 alias gp="git push"
+alias gpu='git push --set-upstream origin $(git branch --show-current)'
 alias br="git branch --show-current"
 alias gc="git commit -v"
 alias gb="git branch"

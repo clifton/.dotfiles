@@ -79,22 +79,29 @@ local function get_os()
 end
 
 local function copy_to_system_clipboard(lines)
-  local os = get_os()
+  local os_name = get_os()
   local text = table.concat(lines, "\n")
 
-  if os == 'Windows' then
-    vim.fn.system('echo ' .. vim.fn.shellescape(text) .. '| clip.exe')
-  elseif os == 'WSL' then
-    vim.fn.system('echo ' .. vim.fn.shellescape(text) .. '| /mnt/c/Windows/System32/clip.exe')
-  elseif os == 'macOS' then
-    vim.fn.system('echo ' .. vim.fn.shellescape(text) .. '| pbcopy')
+  -- Try OSC 52 escape sequence first (works in tmux and most modern terminals)
+  local osc52 = string.format("\027]52;c;%s\027\\", vim.fn.system({'base64'}, text):gsub('\n', ''))
+  io.write(osc52)
+
+  -- Also copy using native clipboard tool as fallback
+  if os_name == 'Windows' then
+    vim.fn.system({'clip.exe'}, text)
+  elseif os_name == 'WSL' then
+    vim.fn.system({'/mnt/c/Windows/System32/clip.exe'}, text)
+  elseif os_name == 'macOS' then
+    vim.fn.system({'pbcopy'}, text)
   else
     if vim.fn.executable('xclip') == 1 then
-      vim.fn.system('echo ' .. vim.fn.shellescape(text) .. '| xclip -selection clipboard')
+      vim.fn.system({'xclip', '-selection', 'clipboard'}, text)
     elseif vim.fn.executable('xsel') == 1 then
-      vim.fn.system('echo ' .. vim.fn.shellescape(text) .. '| xsel --clipboard --input')
+      vim.fn.system({'xsel', '--clipboard', '--input'}, text)
+    elseif vim.fn.executable('wl-copy') == 1 then
+      vim.fn.system({'wl-copy'}, text)
     else
-      print("No clipboard tool found. Please install xclip or xsel.")
+      print("No clipboard tool found. Please install xclip, xsel, or wl-copy.")
     end
   end
 end
