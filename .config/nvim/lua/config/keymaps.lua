@@ -128,11 +128,6 @@ local function paste_from_system_clipboard()
 end
 
 -- Clipboard mappings
-vim.api.nvim_create_user_command('CopyToClipboard', function(opts)
-  local lines = vim.api.nvim_buf_get_lines(0, opts.line1 - 1, opts.line2, false)
-  copy_to_system_clipboard(lines)
-end, { range = true })
-
 map("n", "<leader>p", function()
   local clipboard_content = paste_from_system_clipboard()
   local lines = vim.split(clipboard_content, "\n")
@@ -140,4 +135,10 @@ map("n", "<leader>p", function()
   vim.api.nvim_buf_set_lines(0, current_line, current_line, false, lines)
 end)
 
-map("v", "<leader>y", ":'<,'>CopyToClipboard<CR>")
+map("v", "<leader>y", function()
+  -- Yank selection to unnamed register
+  vim.cmd('normal! y')
+  -- Get the yanked text
+  local text = vim.fn.getreg('"')
+  copy_to_system_clipboard({text})
+end)
