@@ -264,3 +264,6 @@ fi
 
 # Added by Antigravity
 export PATH="$HOME/.antigravity/antigravity/bin:$PATH"
+
+# Added by Antigravity
+export PATH="/Users/clifton/.antigravity/antigravity/bin:$PATH"
