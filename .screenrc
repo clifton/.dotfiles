@@ -1,0 +1,25 @@
+# Enable UTF-8 support
+defutf8 on
+utf8 on on
+
+# Use 256-color terminal
+term screen-256color
+
+# Larger scrollback buffer
+defscrollback 10000
+
+# Disable startup message
+startup_message off
+
+# Status line
+hardstatus alwayslastline
+hardstatus string '%{= kG}[ %{G}%H %{g}][%= %{= kw}%?%-Lw%?%{r}(%{W}%n*%f%t%?(%u)%?%{r})%{w}%?%+Lw%?%?%= %{g}][%{B} %m-%d %{W}%c %{g}]'
+
+# Fix for backspace key
+bindkey -k kb stuff "\177"
+
+# Enable mouse scrolling
+termcapinfo xterm* ti@:te@
+
+# Don't block on programs that access the display
+nonblock on
