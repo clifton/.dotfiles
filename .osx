@@ -140,3 +140,46 @@ if [ ${#MISSING_PACKAGES[@]} -gt 0 ]; then
 else
   echo "✓ All required Homebrew packages are installed."
 fi
+
+# =============================================================================
+# Network: Prefer 10G Ethernet over Wi-Fi
+# =============================================================================
+echo ""
+echo "Setting up network preferences (10G ethernet priority)..."
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ETHERNET_SCRIPT="$SCRIPT_DIR/osx/bin/prefer-ethernet.sh"
+ETHERNET_PLIST="$SCRIPT_DIR/osx/LaunchDaemons/com.clifton.prefer-ethernet.plist"
+
+if [[ -f "$ETHERNET_SCRIPT" ]] && [[ -f "$ETHERNET_PLIST" ]]; then
+  # Install the script
+  sudo cp "$ETHERNET_SCRIPT" /usr/local/bin/prefer-ethernet.sh
+  sudo chmod 755 /usr/local/bin/prefer-ethernet.sh
+  sudo chown root:wheel /usr/local/bin/prefer-ethernet.sh
+
+  # Install the LaunchDaemon
+  sudo cp "$ETHERNET_PLIST" /Library/LaunchDaemons/com.clifton.prefer-ethernet.plist
+  sudo chmod 644 /Library/LaunchDaemons/com.clifton.prefer-ethernet.plist
+  sudo chown root:wheel /Library/LaunchDaemons/com.clifton.prefer-ethernet.plist
+
+  # Set network service order (Solo 10G first, then other ethernet, then Wi-Fi)
+  # Get current services
+  if networksetup -listnetworkserviceorder | grep -q "Solo 10G"; then
+    echo "  Setting network service order (Solo 10G priority)..."
+    sudo networksetup -ordernetworkservices \
+      "Solo 10G" \
+      "USB 10/100/1000 LAN" \
+      "USB 10/100/1G/2.5G LAN" \
+      "Thunderbolt Bridge" \
+      "Wi-Fi" \
+      "Tailscale" 2>/dev/null || true
+  fi
+
+  # Unload if already loaded, then load
+  sudo launchctl unload /Library/LaunchDaemons/com.clifton.prefer-ethernet.plist 2>/dev/null || true
+  sudo launchctl load /Library/LaunchDaemons/com.clifton.prefer-ethernet.plist
+
+  echo "✓ Network preferences configured (10G ethernet prioritized over Wi-Fi)"
+else
+  echo "⚠ Network preference files not found, skipping..."
+fi

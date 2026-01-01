@@ -13,6 +13,7 @@ _darcs
 \.old
 
 \.osx
+^/osx
 
 \.swp
 .and.swp

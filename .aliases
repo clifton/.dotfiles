@@ -7,9 +7,11 @@ alias ...="cd ../.."
 if command -v eza &> /dev/null; then
   alias tree="eza $eza_params --tree --group-directories-first --git --git-ignore --all"
   alias lsd="eza $eza_params --only-dirs -a"
+  alias lsa="eza -a"
 else
   # Fallback to ls if eza is not available
   alias ls="ls --color=auto"
+  alias lsa="ls -a"
   alias ll="ls -la"
   alias la="ls -A"
   alias lsd="ls -l | grep '^d'"
