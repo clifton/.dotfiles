@@ -6,7 +6,9 @@ utf8 on on
 term screen-256color
 
 # Larger scrollback buffer
-defscrollback 10000
+# defscrollback 10000
+altscreen on  # Default; limits redraw to screen size
+defscrollback 500  # Reduce from default (often 10000+); less backlog
 
 # Disable startup message
 startup_message off
