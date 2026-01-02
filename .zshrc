@@ -1,7 +1,12 @@
+# Ensure UTF-8 locale for proper Unicode/Nerd Font rendering
+export LANG="${LANG:-en_US.UTF-8}"
+export LC_ALL="${LC_ALL:-en_US.UTF-8}"
+
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+# Skip in screen sessions - screen mangles Unicode
+if [[ -z "$STY" && -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
@@ -34,8 +39,10 @@ source "${ZINIT_HOME}/zinit.zsh"
 autoload -U select-word-style
 select-word-style bash
 
-# Add in Powerlevel10k
-zinit ice depth=1; zinit light romkatv/powerlevel10k
+# Add in Powerlevel10k (skip in screen sessions)
+if [[ -z "$STY" ]]; then
+  zinit ice depth=1; zinit light romkatv/powerlevel10k
+fi
 
 # Add in zsh plugins
 zinit light zdharma-continuum/fast-syntax-highlighting
@@ -132,7 +139,12 @@ setup_oh_my_posh() {
 # setup_oh_my_posh
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+# Use simple prompt in screen sessions, p10k otherwise
+if [[ -n "$STY" ]]; then
+  PS1='%F{green}%n@%m%f:%F{blue}%~%f$ '
+else
+  [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+fi
 
 # Keybindings
 bindkey -e

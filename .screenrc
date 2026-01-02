@@ -1,27 +1,36 @@
-# Enable UTF-8 support
+# UTF-8 and Unicode support (required for Nerd Fonts/Powerline)
 defutf8 on
 utf8 on on
+encoding UTF-8 UTF-8
+defencoding UTF-8
 
-# Use 256-color terminal
-term screen-256color
+# Use 256-color terminal with BCE (background color erase)
+term screen-256color-bce
 
-# Larger scrollback buffer
-# defscrollback 10000
-altscreen on  # Default; limits redraw to screen size
-defscrollback 500  # Reduce from default (often 10000+); less backlog
+# Terminal capabilities for proper Unicode rendering
+# Allow xterm titles and ensure proper character handling
+termcapinfo xterm*|rxvt*|gnome*|screen* ti@:te@
+termcapinfo xterm*|rxvt*|gnome*|screen* hs:ts=\E]0;:fs=\007:ds=\E]0;\007
+
+# Ensure proper handling of wide characters (CJK, emoji, Nerd Font glyphs)
+cjkwidth off
+
+# Scrollback buffer
+altscreen on
+defscrollback 500
 
 # Disable startup message
 startup_message off
 
-# Status line
+# Status line (using only ASCII characters for compatibility)
 hardstatus alwayslastline
 hardstatus string '%{= kG}[ %{G}%H %{g}][%= %{= kw}%?%-Lw%?%{r}(%{W}%n*%f%t%?(%u)%?%{r})%{w}%?%+Lw%?%?%= %{g}][%{B} %m-%d %{W}%c %{g}]'
 
 # Fix for backspace key
 bindkey -k kb stuff "\177"
 
-# Enable mouse scrolling
-termcapinfo xterm* ti@:te@
-
 # Don't block on programs that access the display
 nonblock on
+
+# Shell - use login shell
+shell -$SHELL
