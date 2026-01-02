@@ -1,6 +1,5 @@
-# Ensure UTF-8 locale for proper Unicode/Nerd Font rendering
-export LANG="${LANG:-en_US.UTF-8}"
-export LC_ALL="${LC_ALL:-en_US.UTF-8}"
+# Source shared shell environment
+[[ -f "$HOME/.shellenv" ]] && source "$HOME/.shellenv"
 
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
@@ -10,15 +9,7 @@ if [[ -z "$STY" && -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%)
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-# Initialize Homebrew for macOS or Linux
-if [[ -f "/opt/homebrew/bin/brew" ]]; then
-  # macOS
-  eval "$(/opt/homebrew/bin/brew shellenv)"
-elif [[ -f "/home/linuxbrew/.linuxbrew/bin/brew" ]]; then
-  # Linux
-  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-fi
-
+# zsh-specific: Add Homebrew completions to FPATH
 if type brew &>/dev/null; then
   export FPATH="$(brew --prefix)/share/zsh/site-functions:$FPATH"
 fi
@@ -211,71 +202,12 @@ zstyle ':fzf-tab:complete:*:*' fzf-preview '
 eval "$(fzf --zsh)"
 eval "$(zoxide init zsh)"
 
-export NVM_COMPLETION=true
-export NVM_SYMLINK_CURRENT="true"
+# NVM (zsh-specific lazy loading via zinit)
 zinit wait lucid light-mode for lukechilds/zsh-nvm
 
-source $HOME/.aliases
-
-# only source the env file if it exists
-if [ -f "$HOME/.env" ]; then
-  source $HOME/.env
-fi
-
-# only source the cargo env file if it exists
-if [ -f "$HOME/.cargo/env" ]; then
-  source $HOME/.cargo/env
-fi
-
-if [ -f "/home/linuxbrew/.linuxbrew/opt/mysql-client/bin/mysql" ]; then
-  alias mysql="/home/linuxbrew/.linuxbrew/opt/mysql-client/bin/mysql"
-fi
-
-# foundry
-if [ -d "$HOME/.foundry" ]; then
-  export PATH="$PATH:$HOME/.foundry/bin"
-fi
-
-export PATH="$PATH:$HOME/.local/bin"
-
-# pnpm
-export PNPM_HOME="/Users/clifton/Library/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
-# pnpm end
-
-# Add Windows explorer.exe to PATH in WSL environment
-if [ -f /proc/version ] && grep -q "microsoft" /proc/version; then
-  # Get Windows system32 path and convert it to WSL path format
-  WINDOWS_DIR=$(wslpath -u "$(wslvar SYSTEMROOT)")
-  # Add only explorer.exe by using a function instead of PATH modification
-  function explorer() {
-    "${WINDOWS_DIR}/explorer.exe" "$@"
-  }
-
-  function cmd() {
-    "${WINDOWS_DIR}/system32/cmd.exe" "$@"
-  }
-
-  # Set XDG_RUNTIME_DIR to a user-writable location
-  export XDG_RUNTIME_DIR="$HOME/.xdg_runtime"
-  if [ ! -d "$XDG_RUNTIME_DIR" ]; then
-      mkdir -p "$XDG_RUNTIME_DIR"
-      chmod 0700 "$XDG_RUNTIME_DIR"
-  fi
-fi
-
+# macOS: load SSH keys from keychain
 if [[ "$OSTYPE" == "darwin"* ]]; then
-  # Only run ssh-add if there are no identities loaded
   if ! ssh-add -l &>/dev/null; then
     ssh-add --apple-load-keychain -q
   fi
 fi
-
-# Added by Antigravity
-export PATH="$HOME/.antigravity/antigravity/bin:$PATH"
-
-# Added by Antigravity
-export PATH="/Users/clifton/.antigravity/antigravity/bin:$PATH"

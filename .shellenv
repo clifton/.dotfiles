@@ -1,0 +1,77 @@
+# Shared shell environment for bash and zsh
+# Source this from .bashrc and .zshrc
+
+# UTF-8 locale for proper Unicode/Nerd Font rendering
+export LANG="${LANG:-en_US.UTF-8}"
+export LC_ALL="${LC_ALL:-en_US.UTF-8}"
+
+# Initialize Homebrew for macOS or Linux
+if [ -f "/opt/homebrew/bin/brew" ]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+elif [ -f "/home/linuxbrew/.linuxbrew/bin/brew" ]; then
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+fi
+
+# Cargo/Rust
+if [ -f "$HOME/.cargo/env" ]; then
+  . "$HOME/.cargo/env"
+fi
+
+# Foundry (Ethereum development)
+if [ -d "$HOME/.foundry" ]; then
+  export PATH="$PATH:$HOME/.foundry/bin"
+fi
+
+# Local binaries
+export PATH="$PATH:$HOME/.local/bin"
+
+# pnpm
+if [ -d "$HOME/Library/pnpm" ]; then
+  export PNPM_HOME="$HOME/Library/pnpm"
+elif [ -d "$HOME/.local/share/pnpm" ]; then
+  export PNPM_HOME="$HOME/.local/share/pnpm"
+fi
+if [ -n "$PNPM_HOME" ]; then
+  case ":$PATH:" in
+    *":$PNPM_HOME:"*) ;;
+    *) export PATH="$PNPM_HOME:$PATH" ;;
+  esac
+fi
+
+# Antigravity
+if [ -d "$HOME/.antigravity/antigravity/bin" ]; then
+  export PATH="$HOME/.antigravity/antigravity/bin:$PATH"
+fi
+
+# NVM settings
+export NVM_COMPLETION=true
+export NVM_SYMLINK_CURRENT="true"
+
+# MySQL client alias (Linuxbrew)
+if [ -f "/home/linuxbrew/.linuxbrew/opt/mysql-client/bin/mysql" ]; then
+  alias mysql="/home/linuxbrew/.linuxbrew/opt/mysql-client/bin/mysql"
+fi
+
+# WSL environment
+if [ -f /proc/version ] && grep -q "microsoft" /proc/version 2>/dev/null; then
+  WINDOWS_DIR=$(wslpath -u "$(wslvar SYSTEMROOT)" 2>/dev/null)
+  if [ -n "$WINDOWS_DIR" ]; then
+    explorer() { "${WINDOWS_DIR}/explorer.exe" "$@"; }
+    cmd() { "${WINDOWS_DIR}/system32/cmd.exe" "$@"; }
+  fi
+  export XDG_RUNTIME_DIR="$HOME/.xdg_runtime"
+  if [ ! -d "$XDG_RUNTIME_DIR" ]; then
+    mkdir -p "$XDG_RUNTIME_DIR"
+    chmod 0700 "$XDG_RUNTIME_DIR"
+  fi
+fi
+
+# Source aliases
+if [ -f "$HOME/.aliases" ]; then
+  . "$HOME/.aliases"
+fi
+
+# Source local environment variables
+if [ -f "$HOME/.env" ]; then
+  . "$HOME/.env"
+fi
