@@ -22,9 +22,9 @@ defscrollback 500
 # Disable startup message
 startup_message off
 
-# Status line (using only ASCII characters for compatibility)
+# Minimal status line (hostname + window)
 hardstatus alwayslastline
-hardstatus string '%{= kG}[ %{G}%H %{g}][%= %{= kw}%?%-Lw%?%{r}(%{W}%n*%f%t%?(%u)%?%{r})%{w}%?%+Lw%?%?%= %{g}][%{B} %m-%d %{W}%c %{g}]'
+hardstatus string '%{= dB}%H %{= dd}: %{= dC}%t%{= dd}'
 
 # Fix for backspace key
 bindkey -k kb stuff "\177"
