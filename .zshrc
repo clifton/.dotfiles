@@ -23,6 +23,15 @@ if [ ! -d "$ZINIT_HOME" ]; then
    git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
 fi
 
+# Install Oh My Tmux if not present (https://github.com/gpakosz/.tmux)
+if command -v tmux &>/dev/null && [ ! -d "$HOME/.tmux" ]; then
+  echo "Installing Oh My Tmux..."
+  git clone https://github.com/gpakosz/.tmux.git "$HOME/.tmux"
+  ln -sf "$HOME/.tmux/.tmux.conf" "$HOME/.tmux.conf"
+  # Note: .tmux.conf.local is managed by dotfiles, not copied from oh-my-tmux
+  echo "Oh My Tmux installed!"
+fi
+
 # Source/Load zinit
 source "${ZINIT_HOME}/zinit.zsh"
 
