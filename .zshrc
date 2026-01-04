@@ -220,3 +220,8 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     ssh-add --apple-load-keychain -q
   fi
 fi
+
+# Auto-attach to tmux on SSH connections
+if [[ -z "$TMUX" && -n "$SSH_CONNECTION" ]]; then
+  tmux new -A -s main
+fi
