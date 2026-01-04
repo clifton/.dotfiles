@@ -560,6 +560,32 @@ bind-key -n User1 if-shell "$is_vim" 'send-keys ,y' ''
 # Cross-platform clipboard paste: tries pbpaste (macOS), wl-paste (Wayland), xclip, xsel
 bind-key -n User0 if-shell "$is_vim" 'send-keys ,p' 'run-shell "pbpaste | tmux load-buffer -b clip - 2>/dev/null && tmux paste-buffer -b clip -d 2>/dev/null"'
 
+# -- Nested tmux session support (F12 toggles outer tmux off/on) --------------
+# When "off", all keys pass through to inner tmux. Status bar turns red.
+# Press F12 again to re-enable outer tmux.
+
+# Toggle off: switch to "off" key table, change status bar to indicate
+bind-key -T root F12 \
+  set prefix None \;\
+  set key-table off \;\
+  set status-style "bg=#8b0000,fg=#ffffff" \;\
+  set status-left " 🔻 INNER TMUX ACTIVE - F12 to return " \;\
+  set status-left-length 40 \;\
+  set window-status-current-format "" \;\
+  set window-status-format "" \;\
+  refresh-client -S
+
+# Toggle on: restore normal operation
+bind-key -T off F12 \
+  set -u prefix \;\
+  set -u key-table \;\
+  set -u status-style \;\
+  set -u status-left \;\
+  set -u status-left-length \;\
+  set -u window-status-current-format \;\
+  set -u window-status-format \;\
+  refresh-client -S
+
 bind C-l send-keys 'C-l'
 
 bind e new-window -n 'tmux cfg' -e EDITOR="$EDITOR" \
