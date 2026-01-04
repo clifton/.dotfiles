@@ -79,7 +79,9 @@ keybind = cmd+o=text:\x01\x75
 keybind = shift+enter=text:\x1b\r
 
 # Cmd+C: send F20 to trigger vim yank if in visual mode
-keybind = cmd+c=text:\x1b[34~
+# Using tmux's expected F20 sequence (Shift+F7 equivalent)
+keybind = cmd+c=text:\x1b[19;2~
 
 # Cmd+V: send F19 to trigger vim paste
-keybind = cmd+v=text:\x1b[33~
+# Using tmux's expected F19 sequence (Shift+F6 equivalent)
+keybind = cmd+v=text:\x1b[18;2~

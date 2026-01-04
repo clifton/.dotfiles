@@ -548,12 +548,17 @@ bind -T copy-mode-vi 'C-k' select-pane -U
 bind -T copy-mode-vi 'C-l' select-pane -R
 bind -T copy-mode-vi 'C-\' select-pane -l
 
+# Define custom keys for Cmd+C and Cmd+V from ghostty
+# User0 = Cmd+V (paste), User1 = Cmd+C (copy)
+set -s user-keys[0] "\e[18;2~"
+set -s user-keys[1] "\e[19;2~"
+
 # Cmd+C from ghostty: if in vim, send ,y to yank visual selection to clipboard
-bind-key -n F20 if-shell "$is_vim" 'send-keys ,y' ''
+bind-key -n User1 if-shell "$is_vim" 'send-keys ,y' ''
 
 # Cmd+V from ghostty: if in vim, send ,p to paste from system clipboard; otherwise paste via tmux
 # Cross-platform clipboard paste: tries pbpaste (macOS), wl-paste (Wayland), xclip, xsel
-bind-key -n F19 if-shell "$is_vim" 'send-keys ,p' 'run-shell "{ command -v pbpaste >/dev/null && pbpaste; } || { command -v wl-paste >/dev/null && wl-paste --no-newline; } || { command -v xclip >/dev/null && xclip -selection clipboard -o; } || { command -v xsel >/dev/null && xsel --clipboard --output; } | tmux load-buffer -" \; paste-buffer -dp'
+bind-key -n User0 if-shell "$is_vim" 'send-keys ,p' 'run-shell "pbpaste | tmux load-buffer -b clip - 2>/dev/null && tmux paste-buffer -b clip -d 2>/dev/null"'
 
 bind C-l send-keys 'C-l'
 
