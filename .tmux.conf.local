@@ -565,12 +565,13 @@ bind-key -n User0 if-shell "$is_vim" 'send-keys ,p' 'run-shell "pbpaste | tmux l
 # Press F12 again to re-enable outer tmux.
 
 # Toggle off: switch to "off" key table, change status bar to indicate
+# Using Kanagawa theme colors: roninYellow accent, peachRed for hostname
 bind-key -T root F12 \
   set prefix None \;\
   set key-table off \;\
-  set status-style "bg=#8b0000,fg=#ffffff" \;\
-  set status-left " 🔻 INNER TMUX ACTIVE - F12 to return " \;\
-  set status-left-length 40 \;\
+  set status-style "bg=#1F1F28,fg=#DCD7BA" \;\
+  set status-left "#[bg=#FF9E3B,fg=#C34043,bold] #S #[fg=#FFFFFF,nobold] INNER TMUX ACTIVE - F12 TO RETURN #[bg=#1F1F28] " \;\
+  set status-left-length 80 \;\
   set window-status-current-format "" \;\
   set window-status-format "" \;\
   refresh-client -S
@@ -651,3 +652,26 @@ set-option -g @cpu_percentage_format "%3i" # printf format to use to display per
 #     --bind 'ctrl-f:change-prompt(🔎  )+reload(fd -H -d 2 -t d -E .Trash . ~)' \
 #     --bind 'ctrl-d:execute(tmux kill-session -t {})+change-prompt(⚡  )+reload(sesh list)'
 # )\""
+
+# -- Updated Nested tmux session support (F12 toggles outer tmux off/on) --
+# Overrides previous F12 bindings
+
+bind-key -T root F12 \
+  set prefix None \;\
+  set key-table off \;\
+  set status-style "bg=#1F1F28,fg=#727169" \;\
+  set status-left "#[bg=#E82424,fg=#1F1F28,bold]  #S #[bg=#1F1F28,fg=#E82424] #[fg=#DCD7BA]Inner Tmux Active (F12 to Return) " \;\
+  set status-left-length 80 \;\
+  set window-status-current-format "" \;\
+  set window-status-format "" \;\
+  refresh-client -S
+
+bind-key -T off F12 \
+  set -u prefix \;\
+  set -u key-table \;\
+  set -u status-style \;\
+  set -u status-left \;\
+  set -u status-left-length \;\
+  set -u window-status-current-format \;\
+  set -u window-status-format \;\
+  refresh-client -S
