@@ -587,6 +587,10 @@ bind-key -T off F12 \
   set -u window-status-format \;\
   refresh-client -S
 
+# Copy/paste bindings for "off" key table (when outer tmux is locked via F12)
+bind-key -T off User1 if-shell "$is_vim" 'send-keys ,y' ''
+bind-key -T off User0 if-shell "$is_vim" 'send-keys ,p' 'run-shell "pbpaste | tmux load-buffer -b clip - 2>/dev/null && tmux paste-buffer -b clip -d 2>/dev/null"'
+
 bind C-l send-keys 'C-l'
 
 bind e new-window -n 'tmux cfg' -e EDITOR="$EDITOR" \
@@ -660,7 +664,7 @@ bind-key -T root F12 \
   set prefix None \;\
   set key-table off \;\
   set status-style "bg=#1F1F28,fg=#727169" \;\
-  set status-left "#[bg=#E82424,fg=#1F1F28,bold]  #S #[bg=#1F1F28,fg=#E82424] #[fg=#DCD7BA]Inner Tmux Active (F12 to Return) " \;\
+  set status-left "#[bg=#C34043,fg=#DCD7BA,bold]  #S #[bg=#1F1F28,fg=#C34043] #[fg=#DCD7BA]Inner Tmux Active (F12 to Return) " \;\
   set status-left-length 80 \;\
   set window-status-current-format "" \;\
   set window-status-format "" \;\
@@ -675,3 +679,7 @@ bind-key -T off F12 \
   set -u window-status-current-format \;\
   set -u window-status-format \;\
   refresh-client -S
+
+# Copy/paste bindings for "off" key table (when outer tmux is locked via F12)
+bind-key -T off User1 if-shell "$is_vim" 'send-keys ,y' ''
+bind-key -T off User0 if-shell "$is_vim" 'send-keys ,p' 'run-shell "pbpaste | tmux load-buffer -b clip - 2>/dev/null && tmux paste-buffer -b clip -d 2>/dev/null"'
