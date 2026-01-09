@@ -40,7 +40,7 @@ alias gds="git diff --no-prefix --staged"
 alias gco="git checkout"
 alias gcb="git checkout -b"
 alias gp="git push"
-alias gpu='git push --set-upstream origin $(git branch --show-current)'
+alias gpu='git push --set-upstream origin "$(git branch --show-current)"'
 alias br="git branch --show-current"
 alias gc="git commit -v"
 alias gb="git branch"
@@ -84,7 +84,7 @@ function module() {
 #   $ get-pod airflow-web
 #   > airflow-web-6b94bd6885-ckczv
 function get-pod {
-  kubectl get pod -o name -l app=$1  | awk -F/ '{print $2}' | head -1
+  kubectl get pod -o name -l "app=$1" | awk -F/ '{print $2}' | head -1
 }
 
 # set kubectl context to specified project & airflow namespace
@@ -93,17 +93,18 @@ function get-pod {
 #   > kubeconfig entry generated for sixty-capital-test.
 #   > context "gke_sixty-capital-test_us-east4-c_sixty-capital-test" modified.
 function sixty-project() {
-  gcloud container clusters get-credentials --project=$1 --zone=us-east4-c $1 \
-    && kubectl config set-context $(kubectl config current-context) --namespace=airflow
+  gcloud container clusters get-credentials --project="$1" --zone=us-east4-c "$1" \
+    && kubectl config set-context "$(kubectl config current-context)" --namespace=airflow
 }
 
 function gcr-latest {
-  local gcr_uri=$1
-  local branch=$2
-  local commit_sha=$(gcloud container images list-tags $1 \
+  local gcr_uri="$1"
+  local branch="$2"
+  local commit_sha
+  commit_sha=$(gcloud container images list-tags "$1" \
     --filter="tags=$2" --limit=1 --format='value(tags)' \
     | awk -F, '{print $1}')
-  echo $gcr_uri:$commit_sha
+  echo "${gcr_uri}:${commit_sha}"
 }
 
 # for wsl2
