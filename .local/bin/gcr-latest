@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# Get the latest GCR image URI for a given branch
+# Usage: gcr-latest <gcr-uri> <branch>
+#
+# Example:
+#   $ gcr-latest gcr.io/my-project/my-image main
+#   > gcr.io/my-project/my-image:abc123
+
+set -e
+
+if [[ -z "$1" ]] || [[ -z "$2" ]]; then
+    echo "Usage: gcr-latest <gcr-uri> <branch>" >&2
+    exit 1
+fi
+
+gcr_uri="$1"
+branch="$2"
+commit_sha=$(gcloud container images list-tags "$gcr_uri" \
+    --filter="tags=$branch" --limit=1 --format='value(tags)' \
+    | awk -F, '{print $1}')
+
+echo "${gcr_uri}:${commit_sha}"

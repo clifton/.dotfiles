@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# Get the name of a Kubernetes pod by app label
+# Usage: get-pod <app-label>
+#
+# Example:
+#   $ get-pod airflow-web
+#   > airflow-web-6b94bd6885-ckczv
+
+set -e
+
+if [[ -z "$1" ]]; then
+    echo "Usage: get-pod <app-label>" >&2
+    exit 1
+fi
+
+kubectl get pod -o name -l "app=$1" | awk -F/ '{print $2}' | head -1
