@@ -8,39 +8,6 @@
 #  Smart session manager for the terminal
 #  https://github.com/joshmedeski/sesh
 
-# ideas / tasks
-
-# TODO: experiment with long-living sesh picker (as session)
-# [[session]]
-# name = "sesh"
-# path = "~/c/dotfiles/.config/sesh"
-# startup_command = "sesh connect \"$(sesh list --icons | fzf)\""
-
-# TODO: implement?
-# [[session_preview]]
-# pattern_folder_has = "README.md"
-# preview_command = "glow -s light {}"
-
-# TODO: potential feature ideas
-# [[session]]
-# name = "session"
-# path = "~/path/to/session"
-# startup_script = "~/git_repos/dotfiles/sesh/bin/spotify.sh"
-# detached = true # never attach to this session, just create it in the background
-# tmuxp = "~/.config/tmux/tmuxp/joshmedeski.com.yml"
-# tmuxinator = "~/.config/tmux/tmuxinator/joshmedeski.com.yml"
-
-# TODO: support wildcard paths
-# [[session_wildcard]]
-# session_path = "~/c/nu/main/packages/*"
-# script_path = "~/.config/sesh/scripts/node_dev"
-
-# notes
-
-# NOTE: bat styles (--style)
-# full, auto, plain, changes, header, header-filename,
-
-# import = ["~/.config/sesh/configs/nu-sesh.toml"]
 blacklist = ["scratch"]
 
 # default

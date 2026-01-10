@@ -29,7 +29,7 @@ if [ -f /proc/version ] && grep -q "microsoft" /proc/version; then
   alias cursor="$HOME/.cursor/resources/app/bin/cursor"
 fi
 
-function sc {
+sc() {
   sesh connect "$(sesh list -i | gum filter --limit 1 --placeholder 'Pick a sesh' --prompt='⚡')"
 }
 
@@ -76,53 +76,14 @@ alias rot13='tr a-zA-Z n-za-mN-ZA-M'
 alias grep='grep --colour=auto'
 alias diff='diff -u'
 
-function module() {
+module() {
   open "http://ghub.io/$1"
 }
 
-# get the name of a pod by app label
-#   $ get-pod airflow-web
-#   > airflow-web-6b94bd6885-ckczv
-function get-pod {
-  kubectl get pod -o name -l "app=$1" | awk -F/ '{print $2}' | head -1
-}
-
-# set kubectl context to specified project & airflow namespace
-#   $ sixty-project sixty-capital-test
-#   > Fetching cluster endpoint and auth data.
-#   > kubeconfig entry generated for sixty-capital-test.
-#   > context "gke_sixty-capital-test_us-east4-c_sixty-capital-test" modified.
-function sixty-project() {
-  gcloud container clusters get-credentials --project="$1" --zone=us-east4-c "$1" \
-    && kubectl config set-context "$(kubectl config current-context)" --namespace=airflow
-}
-
-function gcr-latest {
-  local gcr_uri="$1"
-  local branch="$2"
-  local commit_sha
-  commit_sha=$(gcloud container images list-tags "$1" \
-    --filter="tags=$2" --limit=1 --format='value(tags)' \
-    | awk -F, '{print $1}')
-  echo "${gcr_uri}:${commit_sha}"
-}
-
 # for wsl2
-function mem {
+mem() {
   sudo sh -c 'echo 1 > /proc/sys/vm/drop_caches'
   sudo sh -c 'echo 1 > /proc/sys/vm/compact_memory'
 }
 
-flush_redis_cache() {
-    if [ $# -eq 0 ]; then
-        echo "Error: Redis URL is required as an argument"
-        echo "Usage: flush_redis_cache <redis_url>"
-        return 1
-    fi
-
-    REDIS_URL=$1
-
-    redis-cli -u "$REDIS_URL" KEYS "cache:*" | xargs redis-cli -u "$REDIS_URL" DEL
-
-    echo "Cache keys deleted successfully"
-}
+# Redis utilities moved to ~/.local/bin/flush-redis-cache
