@@ -1,0 +1,20 @@
+# ~/.config.local - Machine-specific configuration (not tracked in git)
+# Copy to ~/.config.local and customize for your machine
+#
+# This file is sourced by .shellenv after platform detection
+
+# Network service names for ethernet preference (macOS only)
+# Find your service names with: networksetup -listnetworkserviceorder
+# DOTFILES_ETHERNET_SERVICE="Solo 10G"
+
+# GitHub CLI path override (auto-detected if not set)
+# DOTFILES_GH_PATH="/opt/homebrew/bin/gh"
+
+# Custom PATH additions
+# export PATH="$HOME/custom/bin:$PATH"
+
+# Machine-specific aliases
+# alias myproject="cd ~/projects/myproject"
+
+# Environment-specific variables
+# export MY_API_KEY="..."

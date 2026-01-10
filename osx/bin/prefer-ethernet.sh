@@ -4,7 +4,11 @@
 # Prefer 10G ethernet over Wi-Fi when both are connected
 #
 
-SERVICE_NAME="Solo 10G"
+# Load local config if available (for DOTFILES_ETHERNET_SERVICE)
+[ -f "$HOME/.config.local" ] && . "$HOME/.config.local"
+
+# Use configured service name or fall back to default
+SERVICE_NAME="${DOTFILES_ETHERNET_SERVICE:-Solo 10G}"
 WIFI_INTERFACE="en0"
 
 # Get the interface name for the 10G service

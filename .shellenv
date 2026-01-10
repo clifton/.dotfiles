@@ -1,6 +1,11 @@
 # Shared shell environment for bash and zsh
 # Source this from .bashrc and .zshrc
 
+# Source platform detection
+if [ -f "$HOME/.shellenv.d/platform.sh" ]; then
+  . "$HOME/.shellenv.d/platform.sh"
+fi
+
 # Ensure TERM is supported on this system, fallback if not
 # This handles SSH to systems without tmux-256color terminfo (e.g., Synology NAS)
 if ! infocmp "$TERM" >/dev/null 2>&1; then
@@ -17,11 +22,9 @@ fi
 export LANG="${LANG:-en_US.UTF-8}"
 export LC_ALL="${LC_ALL:-en_US.UTF-8}"
 
-# Initialize Homebrew for macOS or Linux
-if [ -f "/opt/homebrew/bin/brew" ]; then
-  eval "$(/opt/homebrew/bin/brew shellenv)"
-elif [ -f "/home/linuxbrew/.linuxbrew/bin/brew" ]; then
-  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+# Initialize Homebrew using detected prefix
+if [ -n "$DOTFILES_HOMEBREW_PREFIX" ]; then
+  eval "$($DOTFILES_HOMEBREW_PREFIX/bin/brew shellenv)"
 fi
 
 # Cargo/Rust
@@ -83,7 +86,12 @@ if [ -f "$HOME/.aliases" ]; then
   . "$HOME/.aliases"
 fi
 
-# Source local environment variables
+# Source local machine-specific config
+if [ -f "$HOME/.config.local" ]; then
+  . "$HOME/.config.local"
+fi
+
+# Source local environment variables (secrets)
 if [ -f "$HOME/.env" ]; then
   . "$HOME/.env"
 fi

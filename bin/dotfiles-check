@@ -1,0 +1,140 @@
+#!/bin/sh
+# dotfiles-check - Validate dotfiles installation and dependencies
+#
+# Usage: dotfiles-check
+#
+# Checks:
+# - Platform information
+# - Essential tools (git, zsh, tmux, nvim)
+# - Recommended tools (fzf, zoxide, eza, bat, etc.)
+# - Dotfiles symlinks
+# - Local configuration files
+
+set -e
+
+# Colors (check if terminal supports colors)
+if [ -t 1 ]; then
+  RED='\033[0;31m'
+  GREEN='\033[0;32m'
+  YELLOW='\033[0;33m'
+  BLUE='\033[0;34m'
+  NC='\033[0m'
+else
+  RED=''
+  GREEN=''
+  YELLOW=''
+  BLUE=''
+  NC=''
+fi
+
+passed=0
+warned=0
+failed=0
+
+check_pass() { printf "${GREEN}[OK]${NC} %s\n" "$1"; passed=$((passed + 1)); }
+check_warn() { printf "${YELLOW}[WARN]${NC} %s\n" "$1"; warned=$((warned + 1)); }
+check_fail() { printf "${RED}[FAIL]${NC} %s\n" "$1"; failed=$((failed + 1)); }
+
+printf "${BLUE}=== Dotfiles Health Check ===${NC}\n\n"
+
+# Platform info
+printf "${BLUE}Platform:${NC}\n"
+printf "  OS: %s\n" "$(uname -s)"
+printf "  Arch: %s\n" "$(uname -m)"
+printf "  Shell: %s\n" "$SHELL"
+if [ -f /proc/version ] && grep -qi "microsoft" /proc/version 2>/dev/null; then
+  printf "  WSL: yes\n"
+fi
+printf "\n"
+
+# Check essential tools
+printf "${BLUE}Essential Tools:${NC}\n"
+for cmd in git zsh bash tmux nvim; do
+  if command -v "$cmd" >/dev/null 2>&1; then
+    check_pass "$cmd ($(command -v "$cmd"))"
+  else
+    check_fail "$cmd not found"
+  fi
+done
+printf "\n"
+
+# Check recommended tools
+printf "${BLUE}Recommended Tools:${NC}\n"
+for cmd in fzf zoxide eza bat rg delta sesh gum gh; do
+  if command -v "$cmd" >/dev/null 2>&1; then
+    check_pass "$cmd"
+  else
+    check_warn "$cmd not installed"
+  fi
+done
+printf "\n"
+
+# Check Homebrew
+printf "${BLUE}Package Manager:${NC}\n"
+if command -v brew >/dev/null 2>&1; then
+  check_pass "Homebrew ($(brew --prefix))"
+else
+  check_warn "Homebrew not found"
+fi
+printf "\n"
+
+# Check dotfiles symlinks
+printf "${BLUE}Dotfiles Symlinks:${NC}\n"
+DOTFILES_DIR="$HOME/.dotfiles"
+for file in .zshrc .bashrc .shellenv .aliases .gitconfig .tmux.conf.local .p10k.zsh; do
+  if [ -L "$HOME/$file" ]; then
+    target=$(readlink "$HOME/$file")
+    if [ -e "$HOME/$file" ]; then
+      check_pass "$file -> $target"
+    else
+      check_fail "$file -> $target (broken link)"
+    fi
+  elif [ -f "$HOME/$file" ]; then
+    check_warn "$file exists but is not a symlink"
+  else
+    # Some files are optional
+    case "$file" in
+      .p10k.zsh) check_warn "$file not found (optional)" ;;
+      *) check_fail "$file not found" ;;
+    esac
+  fi
+done
+printf "\n"
+
+# Check local config
+printf "${BLUE}Local Configuration:${NC}\n"
+if [ -f "$HOME/.config.local" ]; then
+  check_pass "~/.config.local exists"
+else
+  check_warn "~/.config.local not found (copy from .config.local.example)"
+fi
+if [ -f "$HOME/.env" ]; then
+  check_pass "~/.env exists"
+else
+  check_warn "~/.env not found (optional, for secrets)"
+fi
+printf "\n"
+
+# Check stow
+printf "${BLUE}Stow Status:${NC}\n"
+if command -v stow >/dev/null 2>&1; then
+  check_pass "stow installed"
+else
+  check_warn "stow not installed (needed to deploy dotfiles)"
+fi
+printf "\n"
+
+# Summary
+printf "${BLUE}=== Summary ===${NC}\n"
+printf "Passed: ${GREEN}%d${NC}, Warnings: ${YELLOW}%d${NC}, Failed: ${RED}%d${NC}\n" "$passed" "$warned" "$failed"
+
+if [ "$failed" -gt 0 ]; then
+  printf "\n${RED}Some checks failed. Review the issues above.${NC}\n"
+  exit 1
+elif [ "$warned" -gt 0 ]; then
+  printf "\n${YELLOW}Some optional tools are missing. Install with: brew install <tool>${NC}\n"
+  exit 0
+else
+  printf "\n${GREEN}All checks passed!${NC}\n"
+  exit 0
+fi
