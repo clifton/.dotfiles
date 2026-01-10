@@ -40,7 +40,7 @@ alias gds="git diff --no-prefix --staged"
 alias gco="git checkout"
 alias gcb="git checkout -b"
 alias gp="git push"
-alias gpu='git push --set-upstream origin $(git branch --show-current)'
+alias gpu='git push --set-upstream origin "$(git branch --show-current)"'
 alias br="git branch --show-current"
 alias gc="git commit -v"
 alias gb="git branch"
@@ -79,9 +79,6 @@ alias diff='diff -u'
 module() {
   open "http://ghub.io/$1"
 }
-
-# Kubernetes/GCP utilities moved to ~/.local/bin/
-# get-pod, sixty-project, gcr-latest
 
 # for wsl2
 mem() {

@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 #
 # prefer-ethernet.sh
 # Prefer 10G ethernet over Wi-Fi when both are connected
@@ -64,8 +65,14 @@ main() {
 
   # Switch default route to 10G
   # Note: This requires sudo, which the LaunchAgent runs as root
-  route delete default >/dev/null 2>&1
-  route add default "$gateway" -interface "$eth_iface" >/dev/null 2>&1
+  if ! route delete default >/dev/null 2>&1; then
+    logger -t prefer-ethernet "Warning: Could not delete default route"
+  fi
+
+  if ! route add default "$gateway" -interface "$eth_iface" >/dev/null 2>&1; then
+    logger -t prefer-ethernet "Error: Failed to add route via $SERVICE_NAME"
+    exit 1
+  fi
 
   logger -t prefer-ethernet "Switched default route to $SERVICE_NAME ($eth_iface) via $gateway"
 }

@@ -145,8 +145,8 @@ zstyle ':fzf-tab:complete:*:*' fzf-preview '
 '
 
 # Shell integrations
-eval "$(fzf --zsh)"
-eval "$(zoxide init zsh)"
+command -v fzf >/dev/null 2>&1 && eval "$(fzf --zsh)"
+command -v zoxide >/dev/null 2>&1 && eval "$(zoxide init zsh)"
 
 # NVM (zsh-specific lazy loading via zinit)
 zinit wait lucid light-mode for lukechilds/zsh-nvm
