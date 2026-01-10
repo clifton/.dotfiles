@@ -244,21 +244,6 @@ These tools are guarded with existence checks. Install them:
 brew install fzf zoxide
 ```
 
-### Platform detection variables not set
-
-Ensure `.shellenv.d/platform.sh` is symlinked:
-```bash
-ls -la ~/.shellenv.d/platform.sh
-stow .  # re-run if missing
-```
-
-## Security
-
-See [docs/SECURITY.md](docs/SECURITY.md) for information about:
-- Eval usage and security mitigations
-- SSH configuration decisions
-- Local configuration for secrets
-
 ## License
 
 MIT
