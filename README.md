@@ -214,17 +214,6 @@ This checks:
 - Dotfiles symlinks are properly set up
 - Local configuration files exist
 
-### Extracted Scripts
-
-The following utilities are available in `~/.local/bin/`:
-
-| Script | Usage |
-|--------|-------|
-| `get-pod` | Get Kubernetes pod name by app label |
-| `sixty-project` | Set kubectl context to GCP project |
-| `gcr-latest` | Get latest GCR image for a branch |
-| `flush-redis-cache` | Flush Redis cache keys |
-
 ## Troubleshooting
 
 ### Shell starts with errors
