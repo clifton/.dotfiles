@@ -50,6 +50,40 @@ Sesh
     - sesh for smart terminal session management
     - Custom tmux integration for session switching with FZF
 
+## Prerequisites
+
+### Essential Tools
+
+- **git** - Version control
+- **stow** - GNU Stow for symlink management
+- **zsh** - Primary shell (or bash as fallback)
+- **tmux** - Terminal multiplexer
+- **nvim** - Neovim editor
+
+### Recommended Tools
+
+Install these for the full experience:
+
+```bash
+# macOS
+brew install fzf zoxide eza bat ripgrep git-delta sesh gum gh
+
+# Linux (with Homebrew)
+brew install fzf zoxide eza bat ripgrep git-delta sesh gum gh
+```
+
+| Tool | Purpose |
+|------|---------|
+| fzf | Fuzzy finder for files, history, and completions |
+| zoxide | Smart directory navigation (`z` command) |
+| eza | Modern replacement for `ls` with git integration |
+| bat | Syntax-highlighted file viewer |
+| ripgrep | Fast code search |
+| git-delta | Improved git diffs |
+| sesh | Terminal session manager |
+| gum | Shell script UI components |
+| gh | GitHub CLI for authentication |
+
 ## Installation
 
 ### Linux/macOS Setup
@@ -58,7 +92,7 @@ This repository uses GNU Stow for dotfile management. To install:
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/dotfiles.git ~/.dotfiles
+git clone https://github.com/clifton/.dotfiles.git ~/.dotfiles
 cd ~/.dotfiles
 
 # Install everything
@@ -66,7 +100,25 @@ stow .
 
 # Or install specific components
 stow .zshrc .config/nvim
+
+# Verify installation
+bin/dotfiles-check
 ```
+
+### Post-Installation
+
+1. **Set up GitHub CLI** (for git credential handling):
+   ```bash
+   gh auth login
+   ```
+
+2. **Create local config** (optional, for machine-specific settings):
+   ```bash
+   cp ~/.dotfiles/.config.local.example ~/.config.local
+   # Edit ~/.config.local as needed
+   ```
+
+3. **Start a new shell** to load the configuration
 
 ### Windows PowerShell Setup
 
@@ -141,11 +193,56 @@ The tmux setup provides an enhanced terminal multiplexer experience:
 ## Additional Features
 
 - **Cross-platform Consistency**: Similar aliases between PowerShell and ZSH
-- **Modern Terminal Tools**: 
+- **Modern Terminal Tools**:
   - FZF for fuzzy finding
   - eza/exa for improved directory listings
   - zoxide for smart directory navigation
 - **WSL Integration**: Automatically configures Windows to work seamlessly with Linux
+
+## Utilities
+
+### Health Check
+
+Run `dotfiles-check` to validate your installation:
+
+```bash
+dotfiles-check
+```
+
+This checks:
+- Essential and recommended tools are installed
+- Dotfiles symlinks are properly set up
+- Local configuration files exist
+
+## Troubleshooting
+
+### Shell starts with errors
+
+1. Run `dotfiles-check` to identify missing dependencies
+2. Ensure all essential tools are installed
+3. Check that symlinks point to valid files: `ls -la ~/.zshrc`
+
+### Git operations fail with credential errors
+
+Ensure GitHub CLI is authenticated:
+```bash
+gh auth status
+gh auth login  # if not authenticated
+```
+
+### Homebrew not found
+
+The dotfiles expect Homebrew at standard locations:
+- macOS Apple Silicon: `/opt/homebrew`
+- macOS Intel: `/usr/local`
+- Linux: `/home/linuxbrew/.linuxbrew`
+
+### fzf/zoxide commands not working
+
+These tools are guarded with existence checks. Install them:
+```bash
+brew install fzf zoxide
+```
 
 ## License
 
