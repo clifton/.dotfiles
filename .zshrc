@@ -71,7 +71,9 @@ zinit light carapace-sh/carapace-bin
 #     atload"source <(carapace _carapace zsh)"
 # zinit light zdharma-continuum/null
 
-zinit light Aloxaf/fzf-tab  # load after compinit
+if [[ -t 0 ]] && [[ -t 1 ]]; then
+  zinit light Aloxaf/fzf-tab  # load after compinit (only if TTY available)
+fi
 
 zinit cdreplay -q
 

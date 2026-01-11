@@ -20,6 +20,10 @@ All notable changes to the dotfiles repository will be documented in this file.
 ### Added
 - Added comprehensive documentation header to `.osx` script explaining purpose, usage, and configuration
 
+### Fixed
+- Fixed SSH config for `fat` host by removing RemoteCommand (prevents "not a terminal" error)
+- Fixed fzf-tab loading in `.zshrc` to only load when TTY is available (prevents "open terminal failed" on remote hosts)
+
 ---
 
 ## Format
