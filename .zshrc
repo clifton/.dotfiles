@@ -162,3 +162,6 @@ fi
 if [[ -z "$TMUX" && -n "$SSH_CONNECTION" ]]; then
   tmux new -A -s main
 fi
+
+# opencode
+export PATH="$HOME/.opencode/bin:$PATH"

@@ -1,4 +1,35 @@
 #!/bin/bash
+#
+# macOS Configuration Script
+# ===========================
+#
+# Purpose: Configures macOS system preferences, installs/verifies required Homebrew packages,
+#          and sets up network preferences for optimized connectivity.
+#
+# Usage:
+#   Run once after setting up a new macOS machine or syncing dotfiles:
+#   $ cd ~/.dotfiles
+#   $ chmod +x .osx
+#   $ ./.osx
+#
+# What it does:
+#   ✓ Finder configuration (sort folders first, show extensions, path bar, etc.)
+#   ✓ Dark mode and accessibility preferences (reduce motion)
+#   ✓ Dock configuration (auto-hide, resize, disable animations)
+#   ✓ Show hidden folders (~/Library, /Volumes)
+#   ✓ Ensure Homebrew is installed
+#   ✓ Verify required packages (neovim, fzf, tmux, sesh, zoxide, eza, etc.)
+#   ✓ Set network priority (10G ethernet over Wi-Fi, requires hardware)
+#
+# Requirements:
+#   - macOS operating system
+#   - Internet connection (for Homebrew installation if needed)
+#   - Admin/sudo access (for system preferences and network configuration)
+#
+# Notes:
+#   - Network preferences section is hardware-specific and may require adjustment
+#   - Script will exit with error if required Homebrew packages are missing
+#
 
 # Sort folders first in Finder
 defaults write com.apple.finder _FXSortFoldersFirst -bool true
