@@ -25,3 +25,6 @@ _darcs
 
 # Windows-specific files
 ^/PowerShell
+
+# Scripts (not symlinked)
+^/scripts

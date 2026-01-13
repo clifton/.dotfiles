@@ -70,6 +70,9 @@ brew install fzf zoxide eza bat ripgrep git-delta sesh gum gh
 
 # Linux (with Homebrew)
 brew install fzf zoxide eza bat ripgrep git-delta sesh gum gh
+
+# Worktrunk (optional, for task/worktree management)
+brew install max-sixty/worktrunk/wt && wt config shell install
 ```
 
 | Tool | Purpose |
@@ -83,6 +86,7 @@ brew install fzf zoxide eza bat ripgrep git-delta sesh gum gh
 | sesh | Terminal session manager |
 | gum | Shell script UI components |
 | gh | GitHub CLI for authentication |
+| wt | Task and git worktree management |
 
 ## Installation
 
@@ -94,6 +98,9 @@ This repository uses GNU Stow for dotfile management. To install:
 # Clone the repository
 git clone https://github.com/clifton/.dotfiles.git ~/.dotfiles
 cd ~/.dotfiles
+
+# Install recommended tools (optional but recommended)
+./scripts/install-tools.sh
 
 # Install everything
 stow .
