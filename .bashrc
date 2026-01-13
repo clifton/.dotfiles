@@ -52,3 +52,5 @@ if command -v brew &>/dev/null; then
     . "$(brew --prefix)/etc/profile.d/bash_completion.sh"
   fi
 fi
+
+if command -v wt >/dev/null 2>&1; then eval "$(command wt config shell init bash)"; fi
