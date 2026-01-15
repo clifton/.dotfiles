@@ -160,8 +160,8 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   fi
 fi
 
-# Auto-attach to tmux on SSH connections
-if [[ -z "$TMUX" && -n "$SSH_CONNECTION" ]]; then
+# Auto-attach to tmux on SSH connections (only if TTY available)
+if [[ -z "$TMUX" && -n "$SSH_CONNECTION" && -t 0 && -t 1 ]]; then
   tmux new -A -s main
 fi
 
