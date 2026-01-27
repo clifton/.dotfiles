@@ -27,6 +27,10 @@ name = "Downloads"
 path = "~/Downloads"
 
 [[session]]
+name = "clawd"
+path = "~/clawd"
+
+[[session]]
 name = "home (~)"
 path = "~"
 

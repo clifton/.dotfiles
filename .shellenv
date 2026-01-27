@@ -37,7 +37,37 @@ fi
 # Local binaries
 export PATH="$PATH:$HOME/.local/bin"
 
-# pnpm
+# Antigravity
+if [ -d "$HOME/.antigravity/antigravity/bin" ]; then
+  export PATH="$HOME/.antigravity/antigravity/bin:$PATH"
+fi
+
+# Google Cloud SDK
+if [ -d "$HOME/google-cloud-sdk/bin" ]; then
+  export PATH="$HOME/google-cloud-sdk/bin:$PATH"
+fi
+
+# gog (Gmail CLI)
+if [ -d "$HOME/gogcli/bin" ]; then
+  export PATH="$HOME/gogcli/bin:$PATH"
+fi
+
+# Package manager priority: npm (NVM) → pnpm → Bun
+# Listed in reverse order so Bun has highest priority in PATH
+
+# NVM settings (provides npm - lowest priority of the three)
+export NVM_DIR="$HOME/.nvm"
+export NVM_COMPLETION=true
+export NVM_SYMLINK_CURRENT="true"
+
+# Load nvm (for bash; zsh uses zsh-nvm plugin)
+# Only load if nvm command doesn't exist yet (avoids conflict with zsh-nvm)
+if [ -s "$NVM_DIR/nvm.sh" ] && ! command -v nvm &>/dev/null; then
+  . "$NVM_DIR/nvm.sh"
+  [ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"
+fi
+
+# pnpm (medium priority)
 if [ -d "$HOME/Library/pnpm" ]; then
   export PNPM_HOME="$HOME/Library/pnpm"
 elif [ -d "$HOME/.local/share/pnpm" ]; then
@@ -50,14 +80,10 @@ if [ -n "$PNPM_HOME" ]; then
   esac
 fi
 
-# Antigravity
-if [ -d "$HOME/.antigravity/antigravity/bin" ]; then
-  export PATH="$HOME/.antigravity/antigravity/bin:$PATH"
+# Bun (highest priority - added last to be first in PATH)
+if [ -d "$HOME/.bun/bin" ]; then
+  export PATH="$HOME/.bun/bin:$PATH"
 fi
-
-# NVM settings
-export NVM_COMPLETION=true
-export NVM_SYMLINK_CURRENT="true"
 
 # MySQL client alias (Linuxbrew)
 if [ -f "/home/linuxbrew/.linuxbrew/opt/mysql-client/bin/mysql" ]; then

@@ -153,6 +153,23 @@ command -v zoxide >/dev/null 2>&1 && eval "$(zoxide init zsh)"
 # NVM (zsh-specific lazy loading via zinit)
 zinit wait lucid light-mode for lukechilds/zsh-nvm
 
+# NVM wrapper to auto-update /usr/local/bin symlinks
+nvm() {
+  command nvm "$@"
+  local exit_code=$?
+
+  # Update symlinks after install, alias, or use default
+  if [[ $exit_code -eq 0 ]]; then
+    case "$1" in
+      install|alias|unalias)
+        "$HOME/.dotfiles/scripts/update-nvm-symlink.sh" 2>/dev/null || true
+        ;;
+    esac
+  fi
+
+  return $exit_code
+}
+
 # macOS: load SSH keys from keychain
 if [[ "$OSTYPE" == "darwin"* ]]; then
   if ! ssh-add -l &>/dev/null; then
