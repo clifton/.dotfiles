@@ -1,11 +1,10 @@
 {
-  "enabledPlugins": {
-    "ralph-loop@claude-plugins-official": true,
-    "rust-analyzer-lsp@claude-plugins-official": true
-  },
   "statusLine": {
     "type": "command",
     "command": "wt list statusline --format=claude-code"
   },
-  "model": "opus"
+  "enabledPlugins": {
+    "ralph-loop@claude-plugins-official": true,
+    "rust-analyzer-lsp@claude-plugins-official": true
+  }
 }
