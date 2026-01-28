@@ -4,4 +4,3 @@
 *.swp
 *-dotfiles/
 lazy-lock.json
-.claude/

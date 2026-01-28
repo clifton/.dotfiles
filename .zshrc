@@ -170,11 +170,19 @@ nvm() {
   return $exit_code
 }
 
-# macOS: load SSH keys from keychain
+# Auto-setup SSH agent on shell startup
 if [[ "$OSTYPE" == "darwin"* ]]; then
+  # macOS: load SSH keys from keychain
   if ! ssh-add -l &>/dev/null; then
-    ssh-add --apple-load-keychain -q
+    ssh-add --apple-load-keychain -q 2>/dev/null
   fi
+else
+  # Linux: Set SSH_AUTH_SOCK to systemd user agent if available
+  _systemd_socket="/run/user/$(id -u)/ssh-agent.socket"
+  if [ -S "$_systemd_socket" ]; then
+    export SSH_AUTH_SOCK="$_systemd_socket"
+  fi
+  unset _systemd_socket
 fi
 
 # Auto-attach to tmux on SSH connections (only if TTY available)

@@ -104,6 +104,101 @@ if [ -f /proc/version ] && grep -q "microsoft" /proc/version 2>/dev/null; then
   fi
 fi
 
+# Cross-platform SSH agent setup
+keys() {
+  # Detect platform
+  local is_wsl=false
+  local is_macos=false
+
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    is_macos=true
+  elif [ -f /proc/version ] && grep -q "microsoft" /proc/version 2>/dev/null; then
+    is_wsl=true
+  fi
+
+  # macOS: Use keychain integration
+  if [ "$is_macos" = true ]; then
+    if ! ssh-add -l &>/dev/null; then
+      ssh-add --apple-load-keychain 2>/dev/null || ssh-add -K ~/.ssh/id_ed25519 2>/dev/null
+    fi
+    echo "SSH keys loaded from macOS keychain"
+    ssh-add -l
+    return 0
+  fi
+
+  # WSL2: Use keychain utility if available
+  if [ "$is_wsl" = true ] && command -v keychain &>/dev/null; then
+    eval "$(keychain --eval --agents ssh id_rsa 2>/dev/null)"
+    echo "SSH keys loaded via keychain"
+    ssh-add -l 2>/dev/null || echo "No keys loaded"
+    return 0
+  fi
+
+  # Linux: Try systemd user ssh-agent first, fallback to keychain or manual agent
+  if [ "$is_wsl" = false ] && [ "$is_macos" = false ]; then
+    # Check for systemd user ssh-agent socket
+    local systemd_socket="/run/user/$(id -u)/ssh-agent.socket"
+
+    if [ -S "$systemd_socket" ]; then
+      export SSH_AUTH_SOCK="$systemd_socket"
+
+      # Check if agent is working
+      if ssh-add -l &>/dev/null || [ $? -eq 1 ]; then
+        # Agent is working (exit code 0 = has keys, 1 = no keys but agent OK)
+        echo "Using systemd ssh-agent at $systemd_socket"
+
+        # Add default keys if none are loaded
+        if ! ssh-add -l &>/dev/null; then
+          echo "Loading SSH keys..."
+          for key in ~/.ssh/id_rsa ~/.ssh/id_ed25519 ~/.ssh/id_ecdsa; do
+            [ -f "$key" ] && ssh-add "$key" 2>/dev/null && echo "Added: $key"
+          done
+        fi
+
+        echo "Currently loaded keys:"
+        ssh-add -l
+        return 0
+      fi
+    fi
+
+    # Fallback to keychain if available
+    if command -v keychain &>/dev/null; then
+      eval "$(keychain --eval --agents ssh id_rsa 2>/dev/null)"
+      echo "SSH keys loaded via keychain"
+      ssh-add -l 2>/dev/null || echo "No keys loaded"
+      return 0
+    fi
+
+    # Last resort: start or connect to ssh-agent manually
+    if [ -z "$SSH_AUTH_SOCK" ] || ! ssh-add -l &>/dev/null; then
+      # Check for existing agent
+      local agent_env="$HOME/.ssh/agent.env"
+
+      if [ -f "$agent_env" ]; then
+        . "$agent_env" >/dev/null
+      fi
+
+      # Test if agent is still running
+      if ! ssh-add -l &>/dev/null; then
+        # Start new agent
+        echo "Starting new ssh-agent..."
+        ssh-agent -s | grep -v '^echo' > "$agent_env"
+        . "$agent_env" >/dev/null
+      fi
+
+      # Add keys
+      echo "Loading SSH keys..."
+      for key in ~/.ssh/id_rsa ~/.ssh/id_ed25519 ~/.ssh/id_ecdsa; do
+        [ -f "$key" ] && ssh-add "$key" 2>/dev/null && echo "Added: $key"
+      done
+    fi
+
+    echo "Currently loaded keys:"
+    ssh-add -l
+    return 0
+  fi
+}
+
 # Source aliases
 if [ -f "$HOME/.aliases" ]; then
   . "$HOME/.aliases"
